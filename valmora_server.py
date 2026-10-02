@@ -574,6 +574,13 @@ class ValmoraHandler(SimpleHTTPRequestHandler):
             }
             return self.send_json_response(docs)
 
+        # Admin route alias
+        elif path == '/admin':
+            self.send_response(302)
+            self.send_header('Location', '/admin.html')
+            self.end_headers()
+            return
+
         # Fallback to standard static file server
         else:
             return super().do_GET()
@@ -670,7 +677,7 @@ class ValmoraHandler(SimpleHTTPRequestHandler):
             conn.close()
 
             # Attempt Telegram Bot notification if configured
-            threading.Thread(target=send_telegram_notification, args=(order_no, customer_name, customer_phone, total_amount, items)).start()
+            threading.Thread(target=send_telegram_notification, args=(order_no, customer_name, customer_phone, shipping_address, payment_method, total_amount, items)).start()
 
             return self.send_json_response({
                 "success": True,
@@ -748,6 +755,33 @@ class ValmoraHandler(SimpleHTTPRequestHandler):
                 "message": "Valmora tizim sozlamalari yangilandi"
             })
 
+        # 7. Test Telegram Bot Connection
+        elif path == '/api/telegram/test':
+            token = payload.get('token', '').strip()
+            chat_id = payload.get('chat_id', '').strip()
+            if not token or not chat_id:
+                return self.send_json_response({"success": False, "error": "Token va Chat ID talab etiladi"}, 400)
+
+            test_msg = (
+                f"🔔 <b>VALMORA LUXE — TELEGRAM INTEGRATSIYASI FAOL!</b>\n\n"
+                f"✅ Valmora do'koningiz ushbu chatga muvaffaqiyatli ulandi.\n"
+                f"🛍 Yangi buyurtmalar tushishi bilan barcha mijoz ma'lumotlari shu yerga yuboriladi.\n"
+                f"⏰ Vaqt: {datetime.now().strftime('%d.%m.%Y %H:%M:%S')}"
+            )
+            url = f"https://api.telegram.org/bot{token}/sendMessage"
+            data = json.dumps({
+                "chat_id": chat_id,
+                "text": test_msg,
+                "parse_mode": "HTML"
+            }).encode('utf-8')
+
+            try:
+                req = urllib.request.Request(url, data=data, headers={'Content-Type': 'application/json'})
+                resp = urllib.request.urlopen(req, timeout=7)
+                return self.send_json_response({"success": True, "message": "Test xabar muvaffaqiyatli yuborildi"})
+            except Exception as err:
+                return self.send_json_response({"success": False, "error": str(err)}, 400)
+
         else:
             return self.send_json_response({"error": "Endpoint not found"}, 404)
 
@@ -769,7 +803,7 @@ class ValmoraHandler(SimpleHTTPRequestHandler):
 # =============================================================================
 # TELEGRAM BOT NOTIFICATION BRIDGE
 # =============================================================================
-def send_telegram_notification(order_no, customer_name, phone, total_amount, items):
+def send_telegram_notification(order_no, customer_name, phone, shipping_address, payment_method, total_amount, items):
     """Sends immediate luxury telegram notification when an order is created"""
     try:
         conn = get_db()
@@ -784,18 +818,30 @@ def send_telegram_notification(order_no, customer_name, phone, total_amount, ite
         chat_id = chat_row['value'] if chat_row else None
 
         if not bot_token or not chat_id:
-            # If not configured, silent return
+            print(f"[VALMORA TELEGRAM NOTICE] Order #{order_no} created by {customer_name} ({phone}, {shipping_address}), total: {int(total_amount):,} UZS (Telegram not configured yet)")
             return
 
-        item_names = ", ".join([f"{item.get('title', 'Mahsulot')} (x{item.get('qty', 1)})" for item in items])
+        items_text = ""
+        for idx, itm in enumerate(items, 1):
+            title = itm.get('title', 'Mahsulot')
+            qty = itm.get('qty', 1)
+            price = float(itm.get('price', 0))
+            items_text += f"\n  {idx}. <b>{title}</b> — {qty} dona ({int(price * qty):,} so'm)"
+
         message_text = (
-            f"💎 <b>YANGI VALMORA BUYURTMA</b> 💎\n\n"
-            f"📦 <b>Buyurtma:</b> #{order_no}\n"
+            f"💎 <b>YANGI VALMORA BUYURTMA</b> 💎\n"
+            f"━━━━━━━━━━━━━━━━━━━━━━\n"
+            f"📦 <b>Buyurtma ID:</b> #{order_no}\n"
             f"👤 <b>Mijoz:</b> {customer_name}\n"
-            f"📞 <b>Telefon:</b> {phone}\n"
-            f"🛍 <b>Mahsulotlar:</b> {item_names}\n"
-            f"💰 <b>Summa:</b> {int(total_amount):,} so'm\n"
-            f"⏰ <b>Vaqt:</b> {datetime.now().strftime('%d.%m.%Y %H:%M')}\n\n"
+            f"📞 <b>Telefon:</b> <code>{phone}</code>\n"
+            f"📍 <b>Yetkazish manzili:</b> {shipping_address}\n"
+            f"💳 <b>To'lov usuli:</b> {payment_method}\n"
+            f"🚚 <b>Dastavka:</b> VIP Tezkor Yetkazib Berish\n"
+            f"━━━━━━━━━━━━━━━━━━━━━━\n"
+            f"🛍 <b>Mahsulotlar:</b>{items_text}\n"
+            f"━━━━━━━━━━━━━━━━━━━━━━\n"
+            f"💰 <b>JAMI SUMMA:</b> <b>{int(total_amount):,} so'm</b>\n"
+            f"⏰ <b>Sana va vaqt:</b> {datetime.now().strftime('%d.%m.%Y %H:%M')}\n\n"
             f"👑 <i>Valmora Autonomous Commerce Engine</i>"
         )
 
@@ -807,10 +853,10 @@ def send_telegram_notification(order_no, customer_name, phone, total_amount, ite
         }).encode('utf-8')
 
         req = urllib.request.Request(url, data=data, headers={'Content-Type': 'application/json'})
-        urllib.request.urlopen(req, timeout=5)
+        urllib.request.urlopen(req, timeout=7)
+        print(f"[VALMORA TELEGRAM] Order #{order_no} successfully dispatched to Telegram chat {chat_id}")
     except Exception as e:
-        # Failsafe non-blocking
-        pass
+        print(f"[VALMORA TELEGRAM ERROR] Failed to send notification: {e}")
 
 # =============================================================================
 # SERVER STARTUP

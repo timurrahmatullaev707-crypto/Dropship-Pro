@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Valmora | Tizim Sozlamalari</title>
+    <title>Valmora | Tizim & Telegram Sozlamalari</title>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
@@ -11,13 +11,18 @@
 <body>
     <div class="dashboard">
         <aside class="sidebar">
-            <div class="logo" onclick="window.location.href='index.html'">
+            <div class="logo" onclick="window.location.href='admin.html'">
                 <div class="logo-icon"><i class="fa-solid fa-gem"></i></div>
                 <span>VALMORA</span>
             </div>
             <div class="sidebar-title">NAVIGATSIYA</div>
             <nav class="sidebar-menu">
-                <a href="index.html"><i class="fa-solid fa-chart-pie"></i><span>Boshqaruv paneli</span></a>
+                <a href="index.html" style="background: rgba(197, 168, 128, 0.08); border-left: 2px solid var(--gold);">
+                    <i class="fa-solid fa-store" style="color: var(--gold);"></i>
+                    <span>Mijozlar Do'koni</span>
+                    <span class="badge" style="background: var(--gold); color: #000;">LIVE</span>
+                </a>
+                <a href="admin.html"><i class="fa-solid fa-chart-pie"></i><span>Boshqaruv paneli</span></a>
                 <a href="products.html"><i class="fa-solid fa-box-archive"></i><span>Mahsulotlar</span></a>
                 <a href="orders.html"><i class="fa-solid fa-bag-shopping"></i><span>Buyurtmalar</span></a>
                 <a href="customers.html"><i class="fa-solid fa-users"></i><span>Mijozlar</span></a>
@@ -31,32 +36,40 @@
 
         <main class="main-content">
             <header class="top-header">
-                <div>
-                    <h1>Do'kon & Tizim Sozlamalari</h1>
-                    <p>Valmora brendi sozlamalari, Telegram integratsiyasi va to'lov shlyuzlari.</p>
+                <div style="display: flex; align-items: center; gap: 14px;">
+                    <button class="mobile-menu-btn" id="mobileMenuBtn">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                    <div>
+                        <h1>Do'kon & Telegram Sozlamalari</h1>
+                        <p>Valmora brendi sozlamalari, Telegram orqali real-vaqt buyurtma xabardorligi va to'lovlar.</p>
+                    </div>
                 </div>
                 <div class="header-actions">
+                    <a href="index.html" class="btn-glass" style="text-decoration: none; padding: 7px 14px; font-size: 13px; display: inline-flex; align-items: center; gap: 8px;">
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                        <span>Do'konni Ko'rish</span>
+                    </a>
                     <button class="icon-button" id="themeToggle"><i class="fa-solid fa-sun"></i></button>
-                    <button class="icon-button cart-toggle-btn"><i class="fa-solid fa-bag-shopping"></i><span class="cart-counter">0</span></button>
                     <div class="profile"><div class="profile-avatar">V</div><div class="profile-info"><strong>Valmora</strong><span>Admin</span></div></div>
                 </div>
             </header>
 
-            <div class="products-page-container">
-                <div class="panel" style="max-width: 760px;">
+            <div class="products-page-container" style="display: grid; grid-template-columns: 1fr 360px; gap: 24px; align-items: start;">
+                <div class="panel">
                     <div class="panel-header">
-                        <h3>Brend & Do'kon Parametrlari</h3>
+                        <h3><i class="fa-solid fa-sliders" style="color: var(--gold); margin-right: 8px;"></i> Asosiy Parametrlar</h3>
                     </div>
 
-                    <form onsubmit="event.preventDefault(); sound.playSuccess(); showToast('Sozlamalar saqlandi', 'success');">
+                    <form id="settingsForm">
                         <div class="form-grid-2">
                             <div class="form-group">
                                 <label>Brend Nomi</label>
-                                <input type="text" value="Valmora">
+                                <input type="text" id="cfgStoreName" name="store_name" value="VALMORA LUXE">
                             </div>
                             <div class="form-group">
                                 <label>Asosiy Valyuta</label>
-                                <select>
+                                <select id="cfgCurrency" name="currency_symbol">
                                     <option value="UZS">UZS (O'zbek so'mi)</option>
                                     <option value="USD">USD (AQSh dollari)</option>
                                 </select>
@@ -64,36 +77,148 @@
                         </div>
 
                         <div class="form-group">
-                            <label>Telegram Bot Token (Buyurtmalarni Telegramda olish)</label>
-                            <input type="text" value="7128392812:AAHq_ValmoraBotToken">
+                            <label>Mijozlarni Qo'llab-quvvatlash Telefoni</label>
+                            <input type="text" id="cfgSupportPhone" name="support_phone" value="+998 71 200 88 00">
+                        </div>
+
+                        <div style="margin: 24px 0 16px; padding-top: 16px; border-top: 1px solid var(--border-color);">
+                            <h4 style="font-family: var(--font-serif); font-size: 1.25rem; color: var(--gold); margin-bottom: 8px;">
+                                <i class="fa-brands fa-telegram"></i> Telegram Buyurtma Integratsiyasi
+                            </h4>
+                            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
+                                Sayt orqali yangi buyurtma berilganda, xaridor ma'lumotlari darhol ushbu Telegram bot va Chat ID ga yuboriladi.
+                            </p>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Telegram Bot Token</label>
+                            <input type="text" id="cfgTelegramToken" name="telegram_bot_token" placeholder="Masalan: 7128392812:AAHq_ValmoraBotToken...">
+                            <small style="color: var(--text-dim); font-size: 11px;">@BotFather orqali yaratilgan bot tokeni</small>
                         </div>
 
                         <div class="form-group">
                             <label>Telegram Administrator Chat ID</label>
-                            <input type="text" value="984128491">
+                            <input type="text" id="cfgTelegramChatId" name="telegram_chat_id" placeholder="Masalan: 984128491 yoki -100xxxxxxx (kanal/guruh ID)">
+                            <small style="color: var(--text-dim); font-size: 11px;">Xabar borishi kerak bo'lgan shaxsiy profilingiz yoki guruhingiz ID raqami</small>
                         </div>
 
-                        <div class="form-grid-2">
-                            <div class="form-group">
-                                <label>Click Merchant ID</label>
-                                <input type="text" value="14209">
-                            </div>
-                            <div class="form-group">
-                                <label>Payme Merchant ID</label>
-                                <input type="text" value="valmora_pay_64f1">
-                            </div>
-                        </div>
-
-                        <div style="display: flex; justify-content: flex-end; margin-top: 18px;">
-                            <button type="submit" class="btn-gradient">
-                                Saqlash
+                        <div style="display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap;">
+                            <button type="button" id="btnTestTelegram" class="btn-glass" style="border-color: rgba(0, 136, 204, 0.4); color: #0088cc;">
+                                <i class="fa-brands fa-telegram"></i> Telegramni Sinab Ko'rish (Test)
+                            </button>
+                            <button type="submit" class="btn-gradient" style="margin-left: auto;">
+                                <i class="fa-solid fa-floppy-disk"></i> Barcha Sozlamalarni Saqlash
                             </button>
                         </div>
                     </form>
                 </div>
+
+                <!-- Telegram Info / Guide Panel -->
+                <div class="panel" style="background: rgba(22, 24, 30, 0.6); border: 1px solid rgba(0, 136, 204, 0.2);">
+                    <div class="panel-header">
+                        <h4 style="color: #0088cc; font-size: 14px; display: flex; align-items: center; gap: 8px;">
+                            <i class="fa-solid fa-circle-info"></i> Botni Qanday Sozlash Kerak?
+                        </h4>
+                    </div>
+                    <div style="font-size: 13px; line-height: 1.6; color: var(--text-muted);">
+                        <p style="margin-bottom: 12px;"><strong>1. Bot yaratish:</strong> Telegramda <a href="https://t.me/BotFather" target="_blank" style="color: var(--gold);">@BotFather</a> ga kiring va <code>/newbot</code> buyrug'ini yuboring.</p>
+                        <p style="margin-bottom: 12px;"><strong>2. Tokenni olish:</strong> BotFather bergan API tokenni yuqoridagi <em>Telegram Bot Token</em> qatoriga qo'ying.</p>
+                        <p style="margin-bottom: 12px;"><strong>3. Chat ID ni aniqlash:</strong> O'z profilingiz ID raqamini bilish uchun Telegramda <a href="https://t.me/userinfobot" target="_blank" style="color: var(--gold);">@userinfobot</a> ga <code>/start</code> bosing va chiqqan <em>Id</em> raqamini <em>Chat ID</em> qatoriga yozing.</p>
+                        <p style="margin-bottom: 12px;"><strong>4. Botni ishga tushirish:</strong> Yangi ochgan botingizga kiring va <code>/start</code> tugmasini bosing (aks holda bot sizga yozolmaydi).</p>
+                        <p style="color: var(--gold); font-size: 12px; margin-top: 8px;">
+                            <i class="fa-solid fa-check-circle"></i> So'ng "Telegramni Sinab Ko'rish" tugmasini bosing!
+                        </p>
+                    </div>
+                </div>
             </div>
         </main>
     </div>
+
     <script src="script.js"></script>
+    <script>
+        // Load real settings from backend on page load
+        async function loadServerSettings() {
+            try {
+                const res = await fetch('/api/settings');
+                const data = await res.json();
+                if (data.success && data.settings) {
+                    if (data.settings.store_name) document.getElementById('cfgStoreName').value = data.settings.store_name;
+                    if (data.settings.currency_symbol) document.getElementById('cfgCurrency').value = data.settings.currency_symbol;
+                    if (data.settings.support_phone) document.getElementById('cfgSupportPhone').value = data.settings.support_phone;
+                    if (data.settings.telegram_bot_token) document.getElementById('cfgTelegramToken').value = data.settings.telegram_bot_token;
+                    if (data.settings.telegram_chat_id) document.getElementById('cfgTelegramChatId').value = data.settings.telegram_chat_id;
+                }
+            } catch (err) {
+                console.log('Using local defaults:', err);
+            }
+        }
+
+        // Save settings to backend
+        document.getElementById('settingsForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const payload = {
+                store_name: document.getElementById('cfgStoreName').value,
+                currency_symbol: document.getElementById('cfgCurrency').value,
+                support_phone: document.getElementById('cfgSupportPhone').value,
+                telegram_bot_token: document.getElementById('cfgTelegramToken').value.trim(),
+                telegram_chat_id: document.getElementById('cfgTelegramChatId').value.trim()
+            };
+
+            try {
+                const res = await fetch('/api/settings', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(payload)
+                });
+                const result = await res.json();
+                if (result.success) {
+                    if (window.sound) window.sound.playSuccess();
+                    showToast("Sozlamalar ma'lumotlar bazasida muvaffaqiyatli saqlandi!", 'success');
+                } else {
+                    showToast(result.error || "Xatolik yuz berdi", 'error');
+                }
+            } catch (err) {
+                showToast("Server bilan bog'lanishda xatolik", 'error');
+            }
+        });
+
+        // Test Telegram Bot
+        document.getElementById('btnTestTelegram').addEventListener('click', async () => {
+            const token = document.getElementById('cfgTelegramToken').value.trim();
+            const chatId = document.getElementById('cfgTelegramChatId').value.trim();
+
+            if (!token || !chatId) {
+                showToast("Iltimos, Bot Token va Chat ID ni kiriting!", 'error');
+                return;
+            }
+
+            const btn = document.getElementById('btnTestTelegram');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Yuborilmoqda...';
+            btn.disabled = true;
+
+            try {
+                const res = await fetch('/api/telegram/test', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ token: token, chat_id: chatId })
+                });
+                const result = await res.json();
+                if (result.success) {
+                    if (window.sound) window.sound.playSuccess();
+                    showToast("✅ Telegramga test xabar muvaffaqiyatli yuborildi! Botingizni tekshiring.", 'success');
+                } else {
+                    showToast("❌ Xato: " + (result.error || "Telegram xabar yuborib bo'lmadi. Token yoki Chat ID ni tekshiring"), 'error');
+                }
+            } catch (err) {
+                showToast("Server bilan ulanishda xatolik", 'error');
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', loadServerSettings);
+    </script>
 </body>
 </html>
