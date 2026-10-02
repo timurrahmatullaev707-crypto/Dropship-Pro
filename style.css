@@ -1038,15 +1038,17 @@ a {
 }
 
 .main-price {
-    font-family: var(--font-serif);
-    font-size: 21px;
-    font-weight: 600;
-    color: var(--text-main);
-    letter-spacing: 0.02em;
+    font-family: var(--font-price) !important;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: -0.02em;
+    font-feature-settings: "tnum" 1;
 }
 
 .original-price {
-    font-size: 12px;
+    font-family: var(--font-price);
+    font-size: 13px;
     color: var(--text-dim);
     text-decoration: line-through;
 }

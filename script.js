@@ -3,134 +3,114 @@
 // Quiet Luxury Aesthetic | Champagne Gold Palette | Refined Interactions
 // ==========================================================================
 
-// Curated Luxury Products for Valmora
+// Curated Luxury Products for Valmora (Synchronized with Storefront)
 const DEFAULT_PRODUCTS = [
     {
-        id: "vm-1",
+        id: "valmora-chronograph-01",
         title: "Valmora Chronograph Minimalist Watch",
-        category: "accessories",
-        categoryName: "Aksessuarlar",
+        category: "watches",
+        category_name: "Soatlar",
+        categoryName: "Soatlar",
         price: 890000,
+        original_price: 1250000,
         originalPrice: 1250000,
-        cost: 380000,
+        cost: 420000,
         sales: 184,
         stock: 6,
         rating: 4.9,
-        badge: "hot",
-        image: "https://images.unsplash.com/photo-1524805444758-089113d48a6d?auto=format&fit=crop&w=600&q=80",
-        description: "Shveytsariya uslubidagi minimalist xronograf soat. Safir billur oyna, 316L jarrohlik po'lati va tabiiy charm tasma.",
+        badge: "LUXURY",
+        image: "https://images.unsplash.com/photo-1524805444758-089113d48a6d?auto=format&fit=crop&w=700&q=80",
+        description: "Shveytsariya uslubidagi sapfir billur shisha va 316L po'latdan ishlangan eksklyuziv xronograf.",
         status: "active"
     },
     {
-        id: "vm-2",
+        id: "valmora-nappa-duffle-02",
         title: "Nappa Leather Travel Duffle Bag",
-        category: "fashion",
-        categoryName: "Moda & Charm",
+        category: "leather",
+        category_name: "Charm buyumlar",
+        categoryName: "Charm buyumlar",
         price: 1150000,
+        original_price: 1600000,
         originalPrice: 1600000,
-        cost: 490000,
+        cost: 530000,
         sales: 96,
         stock: 4,
         rating: 5.0,
-        badge: "profit",
-        image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=600&q=80",
-        description: "Italiya tabiiy Nappa charmidan qo'lda tikilgan sayohat sumkasi. YKK metall zanjirlar va suv o'tkazmaydigan astar.",
+        badge: "EKSKLYUZIV",
+        image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=700&q=80",
+        description: "Italiya tabiiy Nappa charmidan qo'lda tikilgan sayohat va biznes sumkasi. YKK metall furnitura.",
         status: "active"
     },
     {
-        id: "vm-3",
-        title: "Valmora Ceramic Acoustic Diffuser",
-        category: "home",
-        categoryName: "Uy & Interyer",
+        id: "valmora-minimal-wallet-03",
+        title: "Minimalist Cardholder Platinum",
+        category: "leather",
+        category_name: "Charm buyumlar",
+        categoryName: "Charm buyumlar",
         price: 380000,
+        original_price: 520000,
         originalPrice: 520000,
-        cost: 145000,
+        cost: 165000,
         sales: 245,
-        stock: 9,
+        stock: 12,
         rating: 4.8,
-        badge: "hot",
-        image: "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?auto=format&fit=crop&w=600&q=80",
-        description: "Mat keramikadan ishlangan ultratovushli xushbo'ylantiruvchi va namlantiruvchi. Tungi sokin ish rejimi.",
+        badge: "TOP",
+        image: "https://images.unsplash.com/photo-1627123424574-724758594e93?auto=format&fit=crop&w=700&q=80",
+        description: "RFID himoyali ultra yupqa kassa hamyoni. Tabiiy qora charm va titan qisqich.",
         status: "active"
     },
     {
-        id: "vm-4",
-        title: "Titanium Precision Optics Frame",
-        category: "fashion",
-        categoryName: "Moda & Ko'zoynak",
-        price: 490000,
-        originalPrice: 720000,
-        cost: 180000,
+        id: "valmora-sunglasses-05",
+        title: "Titanium Polarized Sunglasses",
+        category: "accessories",
+        category_name: "Aksessuarlar",
+        categoryName: "Aksessuarlar",
+        price: 720000,
+        original_price: 990000,
+        originalPrice: 990000,
+        cost: 290000,
         sales: 142,
-        stock: 11,
+        stock: 8,
         rating: 4.9,
-        badge: "profit",
-        image: "https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&fit=crop&w=600&q=80",
-        description: "Yengil aerokosmik titan qotishmasidan ishlangan hoshiya. Ko'k nurni qaytaruvchi premium ZEISS linzalar bilan mos.",
+        badge: "LUXURY",
+        image: "https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&fit=crop&w=700&q=80",
+        description: "Yengil aerokosmik titan karkas va UV400 qutblangan qoraytirilgan ZEISS standart linzalari.",
         status: "active"
     },
     {
-        id: "vm-5",
-        title: "Wireless Ceramic Charging Tray",
-        category: "electronics",
-        categoryName: "Elektronika",
-        price: 420000,
-        originalPrice: 590000,
-        cost: 160000,
-        sales: 175,
-        stock: 7,
-        rating: 4.7,
-        badge: "hot",
-        image: "https://images.unsplash.com/photo-1586953208448-b95a79798f07?auto=format&fit=crop&w=600&q=80",
-        description: "Tabiiy mat tosh va keramikadan tayyorlangan 15W MagSafe tezkor simsiz zaryadlash stansiyasi.",
+        id: "valmora-silk-scarf-04",
+        title: "Pure Silk Heritage Scarf",
+        category: "accessories",
+        category_name: "Aksessuarlar",
+        categoryName: "Aksessuarlar",
+        price: 540000,
+        original_price: 750000,
+        originalPrice: 750000,
+        cost: 210000,
+        sales: 112,
+        stock: 9,
+        rating: 4.9,
+        badge: "YANGI",
+        image: "https://images.unsplash.com/photo-1608256246200-53e635b5b65f?auto=format&fit=crop&w=700&q=80",
+        description: "100% tabiiy ipak. Valmora geometrik monogrammasi bilan nozik ishlangan ipak sharf.",
         status: "active"
     },
     {
-        id: "vm-6",
-        title: "Obsidian Smart Thermal Carafe",
-        category: "home",
-        categoryName: "Uy & Interyer",
-        price: 290000,
-        originalPrice: 410000,
-        cost: 115000,
-        sales: 310,
-        stock: 15,
-        rating: 4.8,
-        badge: "profit",
-        image: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=600&q=80",
-        description: "Mat obsidian rangli vakuumli termoidish. Haroratni ko'rsatuvchi sensorli diskret OLED indikator.",
-        status: "active"
-    },
-    {
-        id: "vm-7",
-        title: "Damascus Steel Artisanal Knife",
-        category: "home",
-        categoryName: "Uy & Oshxona",
-        price: 680000,
-        originalPrice: 950000,
-        cost: 260000,
-        sales: 88,
-        stock: 3,
-        rating: 5.0,
-        badge: "stock-low",
-        image: "https://images.unsplash.com/photo-1593618998160-e34014e67546?auto=format&fit=crop&w=600&q=80",
-        description: "67 qatlamli VG-10 damashq po'lati, zaytun daraxtidan ishlangan ergonomik dasta. Yuqori aniqlikdagi lazer charxlash.",
-        status: "active"
-    },
-    {
-        id: "vm-8",
-        title: "Cashmere Merino Signature Knit",
-        category: "fashion",
-        categoryName: "Moda & Libos",
-        price: 790000,
-        originalPrice: 1100000,
-        cost: 320000,
-        sales: 119,
+        id: "valmora-chelsea-boots-06",
+        title: "Handcrafted Suede Chelsea Boots",
+        category: "footwear",
+        category_name: "Poyabzallar",
+        categoryName: "Poyabzallar",
+        price: 1420000,
+        original_price: 1950000,
+        originalPrice: 1950000,
+        cost: 650000,
+        sales: 78,
         stock: 5,
-        rating: 4.9,
-        badge: "hot",
-        image: "https://images.unsplash.com/photo-1576566588028-4147f3842f27?auto=format&fit=crop&w=600&q=80",
-        description: "Mongoliya kashmir va Avstraliya merino junidan nozik to'qilgan premium jemper. Tabiiy qumrang ohang.",
+        rating: 5.0,
+        badge: "EKSKLYUZIV",
+        image: "https://images.unsplash.com/photo-1638247025967-b4e38f787b76?auto=format&fit=crop&w=700&q=80",
+        description: "Italiya tabiiy zamshi va charm taglik. O'zgacha qulaylik va mustahkamlik uyg'unligi.",
         status: "active"
     }
 ];
@@ -414,7 +394,20 @@ function getStoredProducts() {
         localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(DEFAULT_PRODUCTS));
         return DEFAULT_PRODUCTS;
     }
-    return JSON.parse(raw);
+    try {
+        let prods = JSON.parse(raw);
+        // Ensure storefront flagship products exist
+        const hasStorefrontItems = prods.some(p => p.id === 'valmora-chronograph-01' || p.id === 'valmora-nappa-duffle-02');
+        if (!hasStorefrontItems) {
+            // Keep any user-added custom products (vm-timestamp), replace legacy defaults with genuine storefront products
+            const customUserProds = prods.filter(p => p.id && p.id.startsWith('vm-') && p.id.length > 8);
+            prods = [...customUserProds, ...DEFAULT_PRODUCTS];
+            localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(prods));
+        }
+        return prods;
+    } catch (e) {
+        return DEFAULT_PRODUCTS;
+    }
 }
 
 function saveStoredProducts(products) {
