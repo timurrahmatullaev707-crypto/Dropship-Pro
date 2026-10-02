@@ -888,8 +888,13 @@ function initAddProductModal() {
             const imgUrl = document.getElementById("productImage")?.value.trim() || 
                 "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=600&q=80";
 
+            const customDesc = document.getElementById("productDesc")?.value.trim();
+
             const catMap = {
+                watches: "Soatlar",
+                leather: "Charm buyumlar",
                 accessories: "Aksessuarlar",
+                footwear: "Poyabzallar",
                 fashion: "Moda & Libos",
                 home: "Uy & Interyer",
                 electronics: "Elektronika"
@@ -899,16 +904,18 @@ function initAddProductModal() {
                 id: "vm-" + Date.now(),
                 title: name,
                 category: category,
+                category_name: catMap[category] || "Kolleksiya",
                 categoryName: catMap[category] || "Kolleksiya",
                 price: price,
+                original_price: Math.round(price * 1.3),
                 originalPrice: Math.round(price * 1.3),
                 cost: cost,
                 sales: 0,
-                stock: 8,
+                stock: 10,
                 rating: 5.0,
-                badge: "hot",
+                badge: "LUXURY",
                 image: imgUrl,
-                description: `${name} — Valmora tanlovi. Sof materiallar va mukammal estetika.`,
+                description: customDesc || `${name} — Valmora tanlovi. Sof tabiiy materiallar va sokin lyuks estetika.`,
                 status: "active"
             };
 
@@ -917,13 +924,15 @@ function initAddProductModal() {
             saveStoredProducts(products);
 
             // Sync with Valmora Python SQLite Backend
-            valmoraApi.createProduct(newProduct);
+            if (window.valmoraApi && typeof window.valmoraApi.createProduct === 'function') {
+                valmoraApi.createProduct(newProduct);
+            }
 
             closeModal();
             form.reset();
             renderProductsGrid();
             launchConfetti();
-            showToast(`"${name}" Valmora ma'lumotlar bazasiga saqlandi`, "success");
+            showToast(`"${name}" Valmora katalogiga muvaffaqiyatli qo'shildi!`, "success");
         });
     }
 }

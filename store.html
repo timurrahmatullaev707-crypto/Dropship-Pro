@@ -9,10 +9,10 @@
     <!-- Meta Description for SEO -->
     <meta name="description" content="Valmora Luxe — Sapfir shisha soatlar, tabiiy Italiya Nappa charmi va nozik lyuks aksessuarlar. O'zbekiston bo'ylab 24 soatda bepul yetkazib berish.">
 
-    <!-- Google Fonts: Cormorant Garamond, Inter, Plus Jakarta Sans & Outfit -->
+    <!-- Google Fonts: Cormorant Garamond, Outfit, Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Outfit:wght@500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
@@ -32,25 +32,16 @@
                 <span data-i18n="topbar_delivery">O'zbekiston bo'ylab barcha xaridlar uchun <strong>BEPUL VIP KURYERLIK</strong> dastavkasi</span>
             </div>
             <div style="display: flex; gap: 16px; align-items: center;">
-                <!-- 3 Languages Switcher (UZ / RU / EN) -->
-                <div style="display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.06); padding: 2px 8px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1);">
-                    <i class="fa-solid fa-globe" style="font-size: 11px; color: var(--gold);"></i>
-                    <select class="language-select" style="background: transparent; border: none; color: #fff; font-size: 11px; cursor: pointer; outline: none; font-weight: 500;">
-                        <option value="uz" style="background: #14161b; color: #fff;">🇺🇿 O'zbek</option>
-                        <option value="ru" style="background: #14161b; color: #fff;">🇷🇺 Русский</option>
-                        <option value="en" style="background: #14161b; color: #fff;">🇬🇧 English</option>
-                    </select>
-                </div>
+                <!-- 3-Language Selector -->
+                <select class="language-select" id="storeLangSelect" style="background: rgba(0,0,0,0.4); border: 1px solid var(--gold-border); color: var(--gold-light); padding: 3px 8px; border-radius: 6px; font-size: 11px; cursor: pointer;">
+                    <option value="uz">🇺🇿 O'zbek</option>
+                    <option value="ru">🇷🇺 Русский</option>
+                    <option value="en">🇬🇧 English</option>
+                </select>
 
-                <a href="tel:+998712008800" style="font-size: 11px;"><i class="fa-solid fa-phone" style="font-size: 10px;"></i> +998 71 200 88 00</a>
+                <a href="tel:+998712008800"><i class="fa-solid fa-phone" style="font-size: 11px;"></i> +998 71 200 88 00</a>
                 <span>|</span>
-
-                <!-- Admin Timur Fast Access Portal -->
-                <a href="admin.html" class="admin-fast-pill" title="Valmora Boshqaruv Markaziga O'tish" style="display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(135deg, rgba(197, 168, 128, 0.25), rgba(197, 168, 128, 0.1)); border: 1px solid var(--gold); color: #fff; padding: 3px 10px; border-radius: 20px; font-size: 11px; text-decoration: none; font-weight: 600; transition: var(--ease-luxury);">
-                    <i class="fa-solid fa-crown" style="color: var(--gold);"></i>
-                    <span>Admin: <strong>Timur</strong></span>
-                    <i class="fa-solid fa-arrow-right" style="font-size: 9px; color: var(--gold);"></i>
-                </a>
+                <a href="https://t.me/valmora_support" target="_blank"><i class="fa-brands fa-telegram"></i> <span data-i18n="support">Telegram Yordam</span></a>
             </div>
         </div>
 
@@ -77,7 +68,7 @@
                 <input type="text" id="storeSearchInput" data-i18n-ph="search_placeholder" placeholder="Katalogdan qidirish (soat, sumka, ko'zoynak, sharf...)">
             </div>
 
-            <!-- Nav Actions (Theme, Cart, Language, Admin) -->
+            <!-- Nav Actions (Wishlist, Theme, Cart) -->
             <div class="store-nav-actions">
                 <button class="icon-button" id="themeToggleBtn" title="Mavzuni almashtirish (Kunduzgi / Tungi)">
                     <i class="fa-solid fa-sun"></i>
@@ -93,10 +84,6 @@
                     <span id="navCartTotal">0 so'm</span>
                     <span class="cart-live-badge" id="navCartCount">0</span>
                 </button>
-
-                <a href="admin.html" class="icon-button" title="Admin Boshqaruv Markazi (Timur)" style="border-color: var(--gold); color: var(--gold); text-decoration: none;">
-                    <i class="fa-solid fa-user-shield"></i>
-                </a>
             </div>
         </nav>
 
@@ -217,52 +204,52 @@
                         </div>
                         <span class="brand-name">VALMORA</span>
                     </div>
-                    <p style="font-size: 13px; color: var(--text-muted); line-height: 1.6; max-width: 360px;">
+                    <p style="font-size: 13px; color: var(--text-muted); line-height: 1.6; max-width: 360px;" data-i18n="footer_manifesto">
                         Valmora — xalqaro lyuks uslubdagi eksklyuziv distribyutsiya va individual hunarmandchilik uyi.
                         Har bir detalda oliy sifat va zamonaviy minimalizm.
                     </p>
                 </div>
 
                 <div class="footer-col">
-                    <h4>Kolleksiyalar</h4>
+                    <h4 data-i18n="footer_collections">Kolleksiyalar</h4>
                     <ul class="footer-links">
-                        <li><a href="javascript:void(0)" onclick="filterByCategory('watches', null)">Shveytsariya Soatlari</a></li>
-                        <li><a href="javascript:void(0)" onclick="filterByCategory('leather', null)">Nappa Charm Buyumlar</a></li>
-                        <li><a href="javascript:void(0)" onclick="filterByCategory('accessories', null)">Titan Ko'zoynaklar</a></li>
-                        <li><a href="javascript:void(0)" onclick="filterByCategory('footwear', null)">Qo'lda Tikilgan Poyabzal</a></li>
+                        <li><a href="javascript:void(0)" onclick="filterByCategory('watches', null)" data-i18n="cat_watches">Shveytsariya Soatlari</a></li>
+                        <li><a href="javascript:void(0)" onclick="filterByCategory('leather', null)" data-i18n="cat_leather">Nappa Charm Buyumlar</a></li>
+                        <li><a href="javascript:void(0)" onclick="filterByCategory('accessories', null)" data-i18n="cat_accessories">Titan Ko'zoynaklar</a></li>
+                        <li><a href="javascript:void(0)" onclick="filterByCategory('footwear', null)" data-i18n="cat_footwear">Qo'lda Tikilgan Poyabzal</a></li>
                     </ul>
                 </div>
 
                 <div class="footer-col">
-                    <h4>Mijozlar Xizmati</h4>
+                    <h4 data-i18n="footer_service">Mijozlar Xizmati</h4>
                     <ul class="footer-links">
-                        <li><a href="javascript:void(0)" onclick="openOnboardingModal()">Yetkazib Berish Manzili</a></li>
-                        <li><a href="javascript:void(0)" onclick="showStoreToast('14 kun ichida almashtirish kafolati mavjud', 'info')">Kafolat & Qaytarish</a></li>
-                        <li><a href="https://t.me/valmora_support" target="_blank">Telegram Operator</a></li>
+                        <li><a href="javascript:void(0)" onclick="openOnboardingModal()" data-i18n="deliver_to">Yetkazib Berish Manzili</a></li>
+                        <li><a href="javascript:void(0)" onclick="showStoreToast('14 kun ichida almashtirish kafolati mavjud', 'info')" data-i18n="footer_guarantee">Kafolat & Qaytarish</a></li>
+                        <li><a href="https://t.me/valmora_support" target="_blank" data-i18n="footer_operator">Telegram Operator</a></li>
                         <li><a href="tel:+998712008800">+998 71 200 88 00</a></li>
                     </ul>
                 </div>
 
                 <div class="footer-col">
-                    <h4>Yetkazib Berish</h4>
-                    <p style="font-size: 13px; color: var(--text-muted); line-height: 1.6; margin-bottom: 12px;">
+                    <h4 data-i18n="footer_delivery_heading">Yetkazib Berish</h4>
+                    <p style="font-size: 13px; color: var(--text-muted); line-height: 1.6; margin-bottom: 12px;" data-i18n="footer_delivery_desc">
                         Toshkent shahri va O'zbekistonning barcha 14 ta hududiga kuryerlik xizmati orqali tezkor va bepul yetkazib beriladi.
                     </p>
                     <div style="font-size: 12px; color: var(--gold);">
-                        <i class="fa-solid fa-clock"></i> Ish vaqti: 09:00 - 22:00 (Har kuni)
+                        <i class="fa-solid fa-clock"></i> <span data-i18n="footer_hours">Ish vaqti: 09:00 - 22:00 (Har kuni)</span>
                     </div>
                 </div>
             </div>
 
             <div class="footer-bottom">
                 <div>
-                    &copy; 2026 VALMORA LUXE. Barcha huquqlar himoyalangan.
+                    &copy; 2026 VALMORA LUXE. <span data-i18n="footer_rights">Barcha huquqlar himoyalangan.</span>
                 </div>
                 <div>
-                    <!-- Discrete Admin Portal link for Store Owner -->
-                    <a href="admin.html" class="admin-portal-link" title="Do'kon Boshqaruv Markaziga o'tish">
+                    <!-- Discrete Admin Portal link for Timur -->
+                    <a href="index.html" class="admin-portal-link" title="Do'kon Boshqaruv Markaziga o'tish">
                         <i class="fa-solid fa-lock"></i>
-                        <span>Boshqaruv Markazi (Admin)</span>
+                        <span>Boshqaruv Markazi (Timur)</span>
                     </a>
                 </div>
             </div>
@@ -317,38 +304,38 @@
                     <i class="fa-solid fa-gem"></i>
                 </div>
                 <h2>VALMORA PRIVÉ</h2>
-                <p>Eksklyuziv to'plamni tomosha qilish va buyurtmani to'g'ri eshigingizgacha yetkazib berish (dastavka) uchun ma'lumotlaringizni kiriting.</p>
+                <p data-i18n="onboard_desc">Eksklyuziv to'plamni tomosha qilish va buyurtmani to'g'ri eshigingizgacha yetkazib berish (dastavka) uchun ma'lumotlaringizni kiriting.</p>
             </div>
 
             <form class="onboarding-form" id="onboardingForm">
                 <div class="form-group">
-                    <label><i class="fa-solid fa-user" style="color: var(--gold); margin-right: 4px;"></i> Ism va familiyangiz *</label>
+                    <label><i class="fa-solid fa-user" style="color: var(--gold); margin-right: 4px;"></i> <span data-i18n="ob_name_label">Ism va familiyangiz *</span></label>
                     <input type="text" id="obName" placeholder="Masalan: Azizbek Karimov" required>
                 </div>
 
                 <div class="form-group">
-                    <label><i class="fa-solid fa-phone" style="color: var(--gold); margin-right: 4px;"></i> Telefon raqamingiz *</label>
+                    <label><i class="fa-solid fa-phone" style="color: var(--gold); margin-right: 4px;"></i> <span data-i18n="ob_phone_label">Telefon raqamingiz *</span></label>
                     <input type="tel" id="obPhone" placeholder="+998 90 123 45 67" required>
                 </div>
 
                 <div class="form-group">
-                    <label><i class="fa-solid fa-location-dot" style="color: var(--gold); margin-right: 4px;"></i> Yashash viloyatingiz / shahringiz *</label>
+                    <label><i class="fa-solid fa-location-dot" style="color: var(--gold); margin-right: 4px;"></i> <span data-i18n="ob_region_label">Yashash viloyatingiz / shahringiz *</span></label>
                     <select id="obRegion" required></select>
                 </div>
 
                 <div class="form-group">
-                    <label><i class="fa-solid fa-map-pin" style="color: var(--gold); margin-right: 4px;"></i> Aniq yetkazib berish manzili (Tuman, ko'cha, uy / xonadon) *</label>
+                    <label><i class="fa-solid fa-map-pin" style="color: var(--gold); margin-right: 4px;"></i> <span data-i18n="ob_address_label">Aniq yetkazib berish manzili (Tuman, ko'cha, uy / xonadon) *</span></label>
                     <input type="text" id="obAddress" placeholder="Masalan: Chilonzor tumani, 9-mavze, 14-uy" required>
                 </div>
 
                 <div class="onboarding-perk-row">
                     <i class="fa-solid fa-shield-check" style="color: var(--gold); font-size: 16px;"></i>
-                    <span>Sizga maxsus VIP kuryer bepul biriktiriladi. Ma'lumotlaringiz to'liq xavfsiz saqlanadi.</span>
+                    <span data-i18n="ob_perk">Sizga maxsus VIP kuryer bepul biriktiriladi. Ma'lumotlaringiz to'liq xavfsiz saqlanadi.</span>
                 </div>
 
                 <div style="display: flex; gap: 10px; margin-top: 10px;">
                     <button type="submit" class="btn-gradient" style="flex: 1; justify-content: center; padding: 13px;">
-                        <i class="fa-solid fa-check"></i> Saqlash & Kolleksiyaga Kirish
+                        <i class="fa-solid fa-check"></i> <span data-i18n="ob_save_btn">Saqlash & Kolleksiyaga Kirish</span>
                     </button>
                 </div>
             </form>
@@ -374,9 +361,9 @@
 
             <div style="text-align: center; margin-bottom: 20px;">
                 <h3 style="font-family: var(--font-serif); font-size: 24px; color: var(--gold); margin-bottom: 4px;">
-                    <i class="fa-solid fa-bolt"></i> Tezkor Buyurtma
+                    <i class="fa-solid fa-bolt"></i> <span data-i18n="co_title">Tezkor Buyurtma</span>
                 </h3>
-                <p style="font-size: 13px; color: var(--text-muted);">
+                <p style="font-size: 13px; color: var(--text-muted);" data-i18n="co_subtitle">
                     Kuryerlik dastavkasi va buyurtmani tasdiqlash
                 </p>
             </div>
@@ -387,47 +374,47 @@
             <form id="checkoutForm" style="display: flex; flex-direction: column; gap: 14px;">
                 <div class="form-grid-2">
                     <div class="form-group">
-                        <label style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 4px;">Xaridor Ismi *</label>
+                        <label style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 4px;"><span data-i18n="ob_name_label">Xaridor Ismi *</span></label>
                         <input type="text" id="coName" required style="width: 100%; background: var(--bg-subtle); border: 1px solid var(--border-color); border-radius: 8px; padding: 10px 14px; color: var(--text-main);">
                     </div>
                     <div class="form-group">
-                        <label style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 4px;">Telefon raqami *</label>
+                        <label style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 4px;"><span data-i18n="ob_phone_label">Telefon raqami *</span></label>
                         <input type="tel" id="coPhone" required style="width: 100%; background: var(--bg-subtle); border: 1px solid var(--border-color); border-radius: 8px; padding: 10px 14px; color: var(--text-main);">
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 4px;">Viloyat / Shahar *</label>
+                    <label style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 4px;"><span data-i18n="ob_region_label">Viloyat / Shahar *</span></label>
                     <select id="coRegion" required style="width: 100%; background: var(--bg-subtle); border: 1px solid var(--border-color); border-radius: 8px; padding: 10px 14px; color: var(--text-main);"></select>
                 </div>
 
                 <div class="form-group">
-                    <label style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 4px;">To'liq yetkazish manzili (Tuman, ko'cha, uy) *</label>
+                    <label style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 4px;"><span data-i18n="ob_address_label">To'liq yetkazish manzili (Tuman, ko'cha, uy) *</span></label>
                     <input type="text" id="coAddress" required style="width: 100%; background: var(--bg-subtle); border: 1px solid var(--border-color); border-radius: 8px; padding: 10px 14px; color: var(--text-main);">
                 </div>
 
                 <!-- Payment Method Selector -->
                 <div class="form-group">
-                    <label style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 8px;">To'lov turi:</label>
+                    <label style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 8px;" data-i18n="co_payment_label">To'lov turi:</label>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                         <label style="display: flex; align-items: center; gap: 8px; background: rgba(197, 168, 128, 0.08); border: 1px solid var(--gold-border); border-radius: 8px; padding: 10px; cursor: pointer; font-size: 12px;">
                             <input type="radio" name="coPayment" value="Eshik oldida (Naqd / Karta)" checked>
-                            <span><strong>Eshik oldida</strong><br><small style="color: var(--text-dim);">Tovarni olib to'lash</small></span>
+                            <span><strong data-i18n="pay_cod">Eshik oldida</strong><br><small style="color: var(--text-dim);" data-i18n="pay_cod_sub">Tovarni olib to'lash</small></span>
                         </label>
                         <label style="display: flex; align-items: center; gap: 8px; background: var(--bg-subtle); border: 1px solid var(--border-color); border-radius: 8px; padding: 10px; cursor: pointer; font-size: 12px;">
                             <input type="radio" name="coPayment" value="Click / Payme (Karta)">
-                            <span><strong>Click / Payme</strong><br><small style="color: var(--text-dim);">Onlayn to'lov</small></span>
+                            <span><strong>Click / Payme</strong><br><small style="color: var(--text-dim);" data-i18n="pay_online_sub">Onlayn to'lov</small></span>
                         </label>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 4px;">Kuryer uchun izoh (Ixtiyoriy)</label>
+                    <label style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 4px;" data-i18n="co_note_label">Kuryer uchun izoh (Ixtiyoriy)</label>
                     <input type="text" id="coNote" placeholder="Masalan: Yetib kelganda qo'ng'iroq qiling" style="width: 100%; background: var(--bg-subtle); border: 1px solid var(--border-color); border-radius: 8px; padding: 10px 14px; color: var(--text-main);">
                 </div>
 
                 <button type="submit" id="btnSubmitOrder" class="btn-gradient" style="justify-content: center; padding: 14px; margin-top: 8px; font-size: 13px;">
-                    <i class="fa-solid fa-check"></i> Buyurtmani Tasdiqlash
+                    <i class="fa-solid fa-check"></i> <span data-i18n="co_confirm_btn">Buyurtmani Tasdiqlash</span>
                 </button>
             </form>
         </div>
@@ -440,10 +427,10 @@
                 <i class="fa-solid fa-check"></i>
             </div>
 
-            <h2 style="font-family: var(--font-serif); font-size: 26px; color: var(--text-main); margin-bottom: 6px;">
+            <h2 style="font-family: var(--font-serif); font-size: 26px; color: var(--text-main); margin-bottom: 6px;" data-i18n="success_title">
                 Buyurtmangiz Qabul Qilindi!
             </h2>
-            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">
+            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;" data-i18n="success_desc">
                 Tafsilotlar do'kon boshqaruviga va <strong>Telegram xabarnomasi</strong> orqali ma'muriyatga yuborildi.
             </p>
 
@@ -451,55 +438,55 @@
             <div class="order-tracking-steps">
                 <div class="tracking-step done">
                     <div class="step-icon"><i class="fa-solid fa-check"></i></div>
-                    <span class="step-label">Qabul qilindi</span>
+                    <span class="step-label" data-i18n="step_received">Qabul qilindi</span>
                 </div>
                 <div class="tracking-step active">
                     <div class="step-icon"><i class="fa-solid fa-box"></i></div>
-                    <span class="step-label">Tekshirilmoqda</span>
+                    <span class="step-label" data-i18n="step_qc">Tekshirilmoqda</span>
                 </div>
                 <div class="tracking-step">
                     <div class="step-icon"><i class="fa-solid fa-truck"></i></div>
-                    <span class="step-label">Kuryerda</span>
+                    <span class="step-label" data-i18n="step_courier">Kuryerda</span>
                 </div>
                 <div class="tracking-step">
                     <div class="step-icon"><i class="fa-solid fa-house"></i></div>
-                    <span class="step-label">Yetkazildi</span>
+                    <span class="step-label" data-i18n="step_delivered">Yetkazildi</span>
                 </div>
             </div>
 
             <!-- Receipt Details Box -->
             <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-color); border-radius: 12px; padding: 18px; text-align: left; font-size: 13px; margin-bottom: 20px; line-height: 1.8;">
                 <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-subtle); padding-bottom: 6px;">
-                    <span style="color: var(--text-muted);">Buyurtma raqami:</span>
+                    <span style="color: var(--text-muted);" data-i18n="rcpt_order_label">Buyurtma raqami:</span>
                     <strong id="rcptOrderNo" style="color: var(--gold);">#VAL-9845</strong>
                 </div>
                 <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-subtle); padding: 6px 0;">
-                    <span style="color: var(--text-muted);">Kuzatuv (Tracking) kodi:</span>
+                    <span style="color: var(--text-muted);" data-i18n="rcpt_trk_label">Kuzatuv (Tracking) kodi:</span>
                     <strong id="rcptTrackingCode" style="color: var(--text-main);">VAL-EXP-1402</strong>
                 </div>
                 <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-subtle); padding: 6px 0;">
-                    <span style="color: var(--text-muted);">Xaridor:</span>
+                    <span style="color: var(--text-muted);" data-i18n="rcpt_cust_label">Xaridor:</span>
                     <span id="rcptCustomer" style="color: var(--text-main);">Mijoz</span>
                 </div>
                 <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-subtle); padding: 6px 0;">
-                    <span style="color: var(--text-muted);">Yetkazish manzili:</span>
+                    <span style="color: var(--text-muted);" data-i18n="rcpt_addr_label">Yetkazish manzili:</span>
                     <span id="rcptAddress" style="color: var(--text-main); max-width: 240px; text-align: right;">Toshkent</span>
                 </div>
                 <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-subtle); padding: 6px 0;">
-                    <span style="color: var(--text-muted);">To'lov usuli:</span>
+                    <span style="color: var(--text-muted);" data-i18n="rcpt_pay_label">To'lov usuli:</span>
                     <span id="rcptPayment" style="color: var(--text-main);">Eshik oldida</span>
                 </div>
                 <div style="display: flex; justify-content: space-between; padding-top: 8px; font-size: 15px; font-weight: 700;">
-                    <span>Jami summa:</span>
-                    <strong id="rcptTotal" style="color: var(--gold); font-family: var(--font-price); font-size: 18px; font-weight: 700;">0 so'm</strong>
+                    <span data-i18n="cart_total_label">Jami summa:</span>
+                    <strong id="rcptTotal" style="color: var(--gold); font-family: var(--font-price); font-size: 18px;">0 so'm</strong>
                 </div>
             </div>
 
             <div style="display: flex; gap: 10px;">
                 <a href="https://t.me/valmora_support" target="_blank" class="btn-glass" style="flex: 1; text-decoration: none; justify-content: center; display: inline-flex; align-items: center; gap: 8px;">
-                    <i class="fa-brands fa-telegram" style="color: #0088cc;"></i> Telegram Qo'llab-quvvatlash
+                    <i class="fa-brands fa-telegram" style="color: #0088cc;"></i> <span data-i18n="support">Telegram Yordam</span>
                 </a>
-                <button class="btn-gradient" style="flex: 1; justify-content: center;" onclick="closeModal('orderSuccessModal')">
+                <button class="btn-gradient" style="flex: 1; justify-content: center;" onclick="closeModal('orderSuccessModal')" data-i18n="continue_btn">
                     Davom Etish
                 </button>
             </div>
@@ -509,7 +496,7 @@
     <!-- Gold Confetti Canvas -->
     <canvas id="confettiCanvas" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 9999;"></canvas>
 
-    <!-- Multi-Language Engine Script -->
+    <!-- Multi-Language Dictionary Script -->
     <script src="translations.js"></script>
 
     <!-- Store Controller Script -->

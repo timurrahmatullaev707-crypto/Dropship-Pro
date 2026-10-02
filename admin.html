@@ -111,10 +111,17 @@
                 </div>
 
                 <div class="header-right">
-                    <a href="index.html" class="btn-glass" style="text-decoration: none; padding: 7px 14px; font-size: 13px; display: inline-flex; align-items: center; gap: 8px;">
-                        <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                        <span>Do'konni Ko'rish</span>
+                    <a href="index.html" class="btn-glass" style="text-decoration: none; padding: 7px 14px; font-size: 13px; display: inline-flex; align-items: center; gap: 8px;" title="Mijozlar vitrinasiga o'tish">
+                        <i class="fa-solid fa-store" style="color: var(--gold);"></i>
+                        <span data-i18n="nav_storefront">Mijozlar Do'koni</span>
                     </a>
+
+                    <!-- Language Switcher UZ / RU / EN -->
+                    <select class="language-select">
+                        <option value="uz">🇺🇿 O'zbek</option>
+                        <option value="ru">🇷🇺 Русский</option>
+                        <option value="en">🇬🇧 English</option>
+                    </select>
 
                     <button class="icon-button" id="themeToggle" title="Rejimni o'zgartirish">
                         <i class="fa-solid fa-sun"></i>
@@ -130,11 +137,11 @@
                         <span class="notification"></span>
                     </button>
 
-                    <div class="profile">
-                        <div class="avatar">V</div>
+                    <div class="profile" title="Admin Profil (Timur)" onclick="window.location.href='settings.html'" style="cursor: pointer;">
+                        <div class="avatar" style="background: linear-gradient(135deg, #c5a880, #9e825c); color: #000; font-weight: 700; box-shadow: 0 0 10px rgba(197,168,128,0.4);">T</div>
                         <div class="profile-info">
-                            <strong>Valmora</strong>
-                            <span>Admin</span>
+                            <strong>Timur</strong>
+                            <span style="color: var(--gold); font-size: 10px;">Asoschi & Bosh Admin</span>
                         </div>
                     </div>
                 </div>
@@ -414,6 +421,7 @@
     </div>
 
     <canvas id="confettiCanvas"></canvas>
+    <script src="translations.js"></script>
     <script src="script.js"></script>
 
 </body>

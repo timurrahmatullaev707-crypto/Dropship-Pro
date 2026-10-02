@@ -3,7 +3,7 @@
    Timeless Elegance | Natural Tones | Refined Typography | Quiet Luxury
    ========================================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
 
 :root {
     /* Natural Luxury Palette - Warm Stone, Champagne Brass & Caviar */
@@ -46,9 +46,21 @@
     /* Fonts */
     --font-serif: 'Cormorant Garamond', Georgia, serif;
     --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-price: 'Plus Jakarta Sans', 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
 
     /* Smooth Transitions */
     --ease-luxury: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* Modern Tabular Luxury Price Typography */
+.card-current-price, .price, .checkout-price, #qvPrice, .dropship-metrics strong, 
+.stat-card h2, .order-total, .cart-total-row strong, #dashTotalRevenue, #dashTotalProfit,
+.product-price, .live-price, #navCartTotal, #rcptTotal, .product-card-price, .checkout-total-price {
+    font-family: var(--font-price) !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.02em !important;
+    font-feature-settings: "tnum" 1, "cv01" 1, "ss01" 1 !important;
+    font-variant-numeric: tabular-nums !important;
 }
 
 /* Light Luxury Theme (Alabaster & Cashmere) */
@@ -2902,13 +2914,16 @@ tbody tr:hover {
 }
 
 .card-current-price {
-    font-family: var(--font-serif);
-    font-size: 21px;
+    font-family: var(--font-price) !important;
+    font-size: 20px;
     font-weight: 700;
     color: var(--gold);
+    letter-spacing: -0.02em;
+    font-feature-settings: "tnum" 1;
 }
 
 .card-old-price {
+    font-family: var(--font-price);
     font-size: 13px;
     color: var(--text-dim);
     text-decoration: line-through;

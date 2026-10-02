@@ -109,16 +109,16 @@
                     </button>
 
                     <select class="language-select">
-                        <option value="uz">O'zbek</option>
-                        <option value="ru">Русский</option>
-                        <option value="en">English</option>
+                        <option value="uz">🇺🇿 O'zbek</option>
+                        <option value="ru">🇷🇺 Русский</option>
+                        <option value="en">🇬🇧 English</option>
                     </select>
 
-                    <div class="profile">
-                        <div class="profile-avatar">V</div>
+                    <div class="profile" title="Admin: Timur" onclick="window.location.href='settings.html'" style="cursor: pointer;">
+                        <div class="profile-avatar" style="background: linear-gradient(135deg, #c5a880, #9e825c); color: #000; font-weight: 700; box-shadow: 0 0 10px rgba(197,168,128,0.4);">T</div>
                         <div class="profile-info">
-                            <strong>Valmora</strong>
-                            <span>Admin</span>
+                            <strong>Timur</strong>
+                            <span style="color: var(--gold); font-size: 10px;">Asoschi & Bosh Admin</span>
                         </div>
                     </div>
                 </div>
@@ -382,16 +382,23 @@
                         <div class="form-group">
                             <label>Kategoriya</label>
                             <select id="productCategory">
-                                <option value="accessories">Aksessuarlar</option>
-                                <option value="fashion">Moda & Libos</option>
-                                <option value="home">Uy & Interyer</option>
-                                <option value="electronics">Elektronika</option>
+                                <option value="watches">Soatlar (Luxury Watches)</option>
+                                <option value="leather">Charm buyumlar (Italian Leather)</option>
+                                <option value="accessories">Aksessuarlar (Accessories)</option>
+                                <option value="footwear">Poyabzallar (Footwear)</option>
+                                <option value="fashion">Moda & Libos (Fashion)</option>
+                                <option value="home">Uy & Interyer (Home)</option>
                             </select>
                         </div>
                         <div class="form-group">
                             <label>Rasm URL</label>
                             <input type="url" id="productImage" placeholder="https://images.unsplash.com/...">
                         </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Tovar Tavsifi (Qisqa va jozibador)</label>
+                        <input type="text" id="productDesc" placeholder="Sapfir billur shisha, Italiya Nappa charmi...">
                     </div>
 
                     <div class="modal-foot" style="padding: 14px 0 0; background: transparent; border-top: 1px solid var(--border-color);">
@@ -438,6 +445,7 @@
     </div>
 
     <canvas id="confettiCanvas"></canvas>
+    <script src="translations.js"></script>
     <script src="script.js"></script>
     <script>
         async function triggerAiMargin() {

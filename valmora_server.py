@@ -150,6 +150,8 @@ def init_db():
             'telegram_bot_token': '',
             'telegram_chat_id': '',
             'support_phone': '+998 71 200 88 00',
+            'admin_name': 'Timur',
+            'admin_role': 'Asoschi & Bosh Admin',
             'platform_version': 'Valmora OS v3.5 Enterprise',
             'license_status': 'Active (Valmora Lifetime Commercial License - Valued $1,200)'
         }

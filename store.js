@@ -192,15 +192,36 @@ async function loadProducts() {
         </div>
     `;
 
+    let serverProds = [];
     try {
         const res = await fetch('/api/products');
         const data = await res.json();
         if (data.success && data.products && data.products.length > 0) {
-            allProducts = data.products;
-        } else {
-            allProducts = fallbackProducts();
+            serverProds = data.products;
         }
-    } catch (err) {
+    } catch (err) {}
+
+    // Also get admin-added products from localStorage
+    let localProds = [];
+    try {
+        const rawLocal = localStorage.getItem('valmora_products_v3') || localStorage.getItem('valmora_products');
+        if (rawLocal) {
+            localProds = JSON.parse(rawLocal);
+        }
+    } catch (e) {}
+
+    if (serverProds.length > 0) {
+        // Merge without duplicates (local products prioritized for newest additions)
+        const combined = [...serverProds];
+        localProds.forEach(lp => {
+            if (!combined.some(sp => sp.id === lp.id)) {
+                combined.unshift(lp);
+            }
+        });
+        allProducts = combined;
+    } else if (localProds.length > 0) {
+        allProducts = localProds;
+    } else {
         allProducts = fallbackProducts();
     }
 
@@ -334,7 +355,7 @@ function renderProducts() {
                 <div class="card-image-wrap" onclick="openQuickView('${p.id}')">
                     <img src="${p.image}" alt="${p.title}" loading="lazy">
                     <button class="card-quick-view-btn" onclick="openQuickView('${p.id}'); event.stopPropagation();">
-                        <i class="fa-solid fa-eye"></i> Batafsil ko'rish
+                        <i class="fa-solid fa-eye"></i> ${typeof getTranslation === 'function' ? getTranslation('btn_quick_view', 'Batafsil ko\'rish') : 'Batafsil ko\'rish'}
                     </button>
                 </div>
 
@@ -370,7 +391,7 @@ function renderProducts() {
 
                     <div class="card-actions-grid">
                         <button class="btn-order-instant" onclick="openInstantOrder('${p.id}')">
-                            <i class="fa-solid fa-bolt"></i> 1 Bosishda Buyurtma
+                            <i class="fa-solid fa-bolt"></i> ${typeof getTranslation === 'function' ? getTranslation('btn_instant_order', '1 Bosishda Buyurtma') : '1 Bosishda Buyurtma'}
                         </button>
                         <button class="btn-add-cart-icon" onclick="addToCart('${p.id}')" title="Savatchaga qo'shish">
                             <i class="fa-solid fa-bag-shopping"></i>
@@ -380,6 +401,8 @@ function renderProducts() {
             </div>
         `;
     }).join('');
+
+    window.renderProducts = renderProducts;
 
     // Attach 3D Tilt Event Listeners
     init3DTilt();
@@ -723,7 +746,7 @@ function openInstantOrder(productId) {
             </div>
             <div style="display: flex; justify-content: space-between; font-size: 15px; font-weight: 700; color: var(--text-main); margin-top: 10px; padding-top: 8px; border-top: 1px dashed var(--border-color);">
                 <span>Jami to'lov:</span>
-                <span style="color: var(--gold); font-family: var(--font-serif); font-size: 18px;">${formatMoney(prod.price)} so'm</span>
+                <span style="color: var(--gold); font-family: var(--font-price); font-size: 18px; font-weight: 700;">${formatMoney(prod.price)} so'm</span>
             </div>
         `;
     }
@@ -773,7 +796,7 @@ function openCartCheckout() {
             </div>` : ''}
             <div style="display: flex; justify-content: space-between; font-size: 15px; font-weight: 700; color: var(--text-main); margin-top: 10px; padding-top: 8px; border-top: 1px dashed var(--border-color);">
                 <span>Jami to'lov:</span>
-                <span style="color: var(--gold); font-family: var(--font-serif); font-size: 18px;">${formatMoney(discountedPrice)} so'm</span>
+                <span style="color: var(--gold); font-family: var(--font-price); font-size: 18px; font-weight: 700;">${formatMoney(discountedPrice)} so'm</span>
             </div>
         `;
     }

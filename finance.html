@@ -41,9 +41,21 @@
                     <p>Valmora daromadlari, tannarx va hisob-kitoblar balansi.</p>
                 </div>
                 <div class="header-actions">
+                    <a href="index.html" class="btn-glass" style="text-decoration: none; padding: 7px 14px; font-size: 13px; display: inline-flex; align-items: center; gap: 8px;">
+                        <i class="fa-solid fa-store" style="color: var(--gold);"></i>
+                        <span data-i18n="nav_storefront">Mijozlar Do'koni</span>
+                    </a>
+                    <select class="language-select">
+                        <option value="uz">🇺🇿 O'zbek</option>
+                        <option value="ru">🇷🇺 Русский</option>
+                        <option value="en">🇬🇧 English</option>
+                    </select>
                     <button class="icon-button" id="themeToggle"><i class="fa-solid fa-sun"></i></button>
                     <button class="icon-button cart-toggle-btn"><i class="fa-solid fa-bag-shopping"></i><span class="cart-counter">0</span></button>
-                    <div class="profile"><div class="profile-avatar">V</div><div class="profile-info"><strong>Valmora</strong><span>Admin</span></div></div>
+                    <div class="profile" title="Admin: Timur" style="cursor: pointer;">
+                        <div class="profile-avatar" style="background: linear-gradient(135deg, #c5a880, #9e825c); color: #000; font-weight: 700; box-shadow: 0 0 10px rgba(197,168,128,0.4);">T</div>
+                        <div class="profile-info"><strong>Timur</strong><span style="color: var(--gold); font-size: 10px;">Asoschi & Bosh Admin</span></div>
+                    </div>
                 </div>
             </header>
 
@@ -118,6 +130,7 @@
             </div>
         </main>
     </div>
+    <script src="translations.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
