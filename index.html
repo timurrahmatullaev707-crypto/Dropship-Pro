@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="uz" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valmora | Boshqaruv Markazi</title>
+
+    <!-- Google Fonts: Cormorant Garamond & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+    <!-- Valmora Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="app">
+
+        <!-- ================= SIDEBAR ================= -->
+        <aside class="sidebar">
+
+            <div class="logo" onclick="window.location.href='index.html'">
+                <div class="logo-icon">
+                    <i class="fa-solid fa-gem"></i>
+                </div>
+                <span>VALMORA</span>
+            </div>
+
+            <div class="menu-title">NAVIGATSIYA</div>
+
+            <nav class="navigation">
+                <a href="index.html" class="nav-item active">
+                    <i class="fa-solid fa-chart-pie"></i>
+                    <span>Boshqaruv paneli</span>
+                </a>
+
+                <a href="products.html" class="nav-item">
+                    <i class="fa-solid fa-box-archive"></i>
+                    <span>Mahsulotlar</span>
+                    <span class="badge">LUXURY</span>
+                </a>
+
+                <a href="orders.html" class="nav-item">
+                    <i class="fa-solid fa-bag-shopping"></i>
+                    <span>Buyurtmalar</span>
+                    <span class="badge">12</span>
+                </a>
+
+                <a href="customers.html" class="nav-item">
+                    <i class="fa-solid fa-users"></i>
+                    <span>Mijozlar</span>
+                </a>
+
+                <div class="menu-title second-title">TAHLIL</div>
+                <a href="analytics.html" class="nav-item">
+                    <i class="fa-solid fa-chart-line"></i>
+                    <span>Statistika</span>
+                </a>
+
+                <a href="finance.html" class="nav-item">
+                    <i class="fa-solid fa-wallet"></i>
+                    <span>Moliya</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-bottom">
+                <a href="settings.html" class="nav-item">
+                    <i class="fa-solid fa-gear"></i>
+                    <span>Sozlamalar</span>
+                </a>
+
+                <div class="upgrade-card">
+                    <div class="upgrade-icon">
+                        <i class="fa-solid fa-crown"></i>
+                    </div>
+                    <h3>Valmora Enterprise</h3>
+                    <p>Eksklyuziv distribyutsiya, individual buyurtmalar va marja nazorati.</p>
+                    <button onclick="window.location.href='products.html'">
+                        Katalogga O'tish
+                    </button>
+                </div>
+            </div>
+
+        </aside>
+
+        <!-- ================= MAIN ================= -->
+        <main class="main">
+
+            <!-- HEADER -->
+            <header class="header">
+                <div style="display: flex; align-items: center; gap: 14px;">
+                    <button class="mobile-menu-btn" id="mobileMenuBtn">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                    <div>
+                        <h1>Boshqaruv Markazi</h1>
+                        <p>Valmora brendi ko'rsatkichlari, savdo tushumlari va buyurtmalar.</p>
+                    </div>
+                </div>
+
+                <div class="header-right">
+                    <button class="icon-button" id="themeToggle" title="Rejimni o'zgartirish">
+                        <i class="fa-solid fa-sun"></i>
+                    </button>
+
+                    <button class="icon-button cart-toggle-btn" title="Savatcha">
+                        <i class="fa-solid fa-bag-shopping"></i>
+                        <span class="cart-counter">0</span>
+                    </button>
+
+                    <button class="icon-button" onclick="showToast('Yangi buyurtmalar kutilmoqda', 'success')">
+                        <i class="fa-regular fa-bell"></i>
+                        <span class="notification"></span>
+                    </button>
+
+                    <select class="language-select">
+                        <option value="uz">O'zbek</option>
+                        <option value="ru">Русский</option>
+                        <option value="en">English</option>
+                    </select>
+
+                    <div class="profile">
+                        <div class="avatar">V</div>
+                        <div class="profile-info">
+                            <strong>Valmora</strong>
+                            <span>Admin</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- CONTENT -->
+            <section class="content">
+
+                <!-- HERO BANNER -->
+                <div class="hero-banner">
+                    <div class="hero-left">
+                        <h2>
+                            <span class="hero-badge">Quiet Luxury</span>
+                            Valmora Savdo & Boshqaruv Tizimi
+                        </h2>  </h2>
+                        <p>Tabiiy estetika, minimalistik dizayn va yuqori daromadli eksklyuziv mahsulotlar.</p>
+                    </div>
+                    <div class="hero-actions">
+                        <button class="btn-gradient" onclick="window.location.href='products.html'">
+                            Katalogni Ko'rish
+                        </button>
+                        <button class="btn-glass cart-toggle-btn">
+                            Savatcha
+                        </button>
+                    </div>
+                </div>
+
+                <!-- STATS -->
+                <div class="stats">
+
+                    <div class="stat-card">
+                        <div class="stat-top">
+                            <span>Jami Savdo</span>
+                            <div class="stat-icon"><i class="fa-solid fa-wallet"></i></div>
+                        </div>
+                        <h2 id="dashTotalRevenue">52,400,000 so'm</h2>
+                        <div class="growth positive">
+                            <i class="fa-solid fa-arrow-trend-up"></i>
+                            +14.2%
+                            <span>o'tgan haftaga nisbatan</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-top">
+                            <span>Buyurtmalar</span>
+                            <div class="stat-icon"><i class="fa-solid fa-bag-shopping"></i></div>
+                        </div>
+                        <h2 id="dashTotalOrders">425</h2>
+                        <div class="growth positive">
+                            <i class="fa-solid fa-arrow-trend-up"></i>
+                            +8.5%
+                            <span>yangi xaridlar</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-top">
+                            <span>Mijozlar Bazasi</span>
+                            <div class="stat-icon"><i class="fa-solid fa-users"></i></div>
+                        </div>
+                        <h2>1,840</h2>
+                        <div class="growth positive">
+                            <i class="fa-solid fa-arrow-trend-up"></i>
+                            +18.7%
+                            <span>premium xaridorlar</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-top">
+                            <span>Sof Marja (Foyda)</span>
+                            <div class="stat-icon"><i class="fa-solid fa-gem"></i></div>
+                        </div>
+                        <h2 id="dashTotalProfit" style="color: var(--gold);">27,200,000 so'm</h2>
+                        <div class="growth positive">
+                            <i class="fa-solid fa-arrow-trend-up"></i>
+                            +22.1%
+                            <span>marja ko'rsatkichi</span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- GRID -->
+                <div class="dashboard-grid">
+
+                    <!-- SAVDO GRAFIGI -->
+                    <div class="panel chart-panel">
+                        <div class="panel-header">
+                            <div>
+                                <h3>Yillik Savdo Dinamikasi</h3>
+                                <p>Oylar bo'yicha tushum va o'sish tendensiyasi</p>
+                            </div>
+
+                            <select id="period" class="filter-select">
+                                <option>2026-yil</option>
+                                <option>O'tgan davr</option>
+                            </select>
+                        </div>
+
+                        <div class="chart">
+                            <div class="y-labels">
+                                <span>100m</span>
+                                <span>80m</span>
+                                <span>60m</span>
+                                <span>40m</span>
+                                <span>20m</span>
+                                <span>0</span>
+                            </div>
+
+                            <div class="chart-area">
+                                <div class="grid-line line-1"></div>
+                                <div class="grid-line line-2"></div>
+                                <div class="grid-line line-3"></div>
+                                <div class="grid-line line-4"></div>
+                                <div class="grid-line line-5"></div>
+
+                                <div class="bars">
+                                    <div class="bar" style="height:45%" data-value="45 mln"></div>
+                                    <div class="bar" style="height:52%" data-value="52 mln"></div>
+                                    <div class="bar" style="height:48%" data-value="48 mln"></div>
+                                    <div class="bar" style="height:65%" data-value="65 mln"></div>
+                                    <div class="bar" style="height:60%" data-value="60 mln"></div>
+                                    <div class="bar" style="height:74%" data-value="74 mln"></div>
+                                    <div class="bar" style="height:70%" data-value="70 mln"></div>
+                                    <div class="bar" style="height:84%" data-value="84 mln"></div>
+                                    <div class="bar" style="height:78%" data-value="78 mln"></div>
+                                    <div class="bar" style="height:90%" data-value="90 mln"></div>
+                                    <div class="bar" style="height:86%" data-value="86 mln"></div>
+                                    <div class="bar" style="height:95%" data-value="95 mln"></div>
+                                </div>
+
+                                <div class="months">
+                                    <span>Yan</span>
+                                    <span>Fev</span>
+                                    <span>Mar</span>
+                                    <span>Apr</span>
+                                    <span>May</span>
+                                    <span>Iyun</span>
+                                    <span>Iyul</span>
+                                    <span>Avg</span>
+                                    <span>Sen</span>
+                                    <span>Okt</span>
+                                    <span>Noy</span>
+                                    <span>Dek</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TEZKOR AMALLAR -->
+                    <div class="panel quick-panel">
+                        <div class="panel-header">
+                            <div>
+                                <h3>Tezkor Amallar</h3>
+                                <p>Valmora boshqaruvi</p>
+                            </div>
+                        </div>
+
+                        <div class="quick-action-list">
+                            <button class="quick-action" onclick="window.location.href='products.html'">
+                                <div class="action-icon">
+                                    <i class="fa-solid fa-plus"></i>
+                                </div>
+                                <div>
+                                    <strong>Mahsulot Qo'shish</strong>
+                                    <span>Yangi eksklyuziv tovar</span>
+                                </div>
+                                <i class="fa-solid fa-chevron-right arrow"></i>
+                            </button>
+
+                            <button class="quick-action" onclick="window.location.href='orders.html'">
+                                <div class="action-icon">
+                                    <i class="fa-solid fa-bag-shopping"></i>
+                                </div>
+                                <div>
+                                    <strong>Buyurtmalarni Ko'rish</strong>
+                                    <span>Mijozlar so'rovlari</span>
+                                </div>
+                                <i class="fa-solid fa-chevron-right arrow"></i>
+                            </button>
+
+                            <button class="quick-action" onclick="window.location.href='products.html'">
+                                <div class="action-icon">
+                                    <i class="fa-solid fa-compass"></i>
+                                </div>
+                                <div>
+                                    <strong>Katalogni Ochish</strong>
+                                    <span>Valmora vitrinasi</span>
+                                </div>
+                                <i class="fa-solid fa-chevron-right arrow"></i>
+                            </button>
+
+                            <button class="quick-action" onclick="showToast('Telegram bildirishnoma faol', 'success')">
+                                <div class="action-icon">
+                                    <i class="fa-brands fa-telegram"></i>
+                                </div>
+                                <div>
+                                    <strong>Telegram Xabardorlik</strong>
+                                    <span>Avtomatik bot integratsiyasi</span>
+                                </div>
+                                <i class="fa-solid fa-chevron-right arrow"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- SO'NGGI BUYURTMALAR -->
+                <div class="panel orders-panel">
+                    <div class="panel-header">
+                        <div>
+                            <h3>So'nggi Buyurtmalar</h3>
+                            <p>Real vaqt rejimida qabul qilingan xaridlar</p>
+                        </div>
+
+                        <button class="btn-glass" onclick="window.location.href='orders.html'">
+                            <span>Barchasini ko'rish</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </div>
+
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>BUYURTMA ID</th>
+                                    <th>MIJOZ</th>
+                                    <th>MAHSULOT NOMI</th>
+                                    <th>SANA</th>
+                                    <th>SUMMA</th>
+                                    <th>HOLATI</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentOrdersTbody">
+                                <!-- Populated dynamically by script.js -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+    <!-- SLIDING CART DRAWER -->
+    <div class="cart-overlay" id="cartOverlay">
+        <div class="cart-drawer">
+            <div class="cart-header">
+                <h3><i class="fa-solid fa-bag-shopping" style="color: var(--gold); font-size: 15px;"></i> Savatcha</h3>
+                <button class="btn-close-modal" id="closeCartBtn">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="cart-items-list" id="cartItemsList"></div>
+
+            <div class="cart-footer">
+                <div class="cart-promo">
+                    <input type="text" placeholder="Promokod">
+                    <button type="button" onclick="showToast('Chegirma qo\'llandi', 'success')">Qo'llash</button>
+                </div>
+
+                <div class="cart-total-row">
+                    <span>Jami:</span>
+                    <strong id="cartTotalPrice">0 so'm</strong>
+                </div>
+
+                <button class="btn-checkout" id="cartCheckoutBtn">
+                    Rasmiylashtirish
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <canvas id="confettiCanvas"></canvas>
+    <script src="script.js"></script>
+
+</body>
+</html>

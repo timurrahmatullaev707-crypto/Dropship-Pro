@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="uz" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valmora | Mijozlar Bazasi</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="dashboard">
+        <aside class="sidebar">
+            <div class="logo" onclick="window.location.href='index.html'">
+                <div class="logo-icon"><i class="fa-solid fa-gem"></i></div>
+                <span>VALMORA</span>
+            </div>
+            <div class="sidebar-title">NAVIGATSIYA</div>
+            <nav class="sidebar-menu">
+                <a href="index.html"><i class="fa-solid fa-chart-pie"></i><span>Boshqaruv paneli</span></a>
+                <a href="products.html"><i class="fa-solid fa-box-archive"></i><span>Mahsulotlar</span></a>
+                <a href="orders.html"><i class="fa-solid fa-bag-shopping"></i><span>Buyurtmalar</span></a>
+                <a href="customers.html" class="active"><i class="fa-solid fa-users"></i><span>Mijozlar</span></a>
+                <div class="sidebar-title">TAHLIL</div>
+                <a href="analytics.html"><i class="fa-solid fa-chart-line"></i><span>Statistika</span></a>
+                <a href="finance.html"><i class="fa-solid fa-wallet"></i><span>Moliya</span></a>
+                <div class="sidebar-title">SOZLAMALAR</div>
+                <a href="settings.html"><i class="fa-solid fa-gear"></i><span>Sozlamalar</span></a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="top-header">
+                <div>
+                    <h1>Mijozlar Bazasi</h1>
+                    <p>Valmora doimiy va individual mijozlari ro'yxati.</p>
+                </div>
+                <div class="header-actions">
+                    <button class="icon-button" id="themeToggle"><i class="fa-solid fa-sun"></i></button>
+                    <button class="icon-button cart-toggle-btn"><i class="fa-solid fa-bag-shopping"></i><span class="cart-counter">0</span></button>
+                    <div class="profile"><div class="profile-avatar">V</div><div class="profile-info"><strong>Valmora</strong><span>Admin</span></div></div>
+                </div>
+            </header>
+
+            <div class="products-page-container">
+                <div class="stats">
+                    <div class="stat-card">
+                        <div class="stat-top"><span>Jami Mijozlar</span><div class="stat-icon"><i class="fa-solid fa-users"></i></div></div>
+                        <h2>1,840 ta</h2>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-top"><span>Qayta Xarid</span><div class="stat-icon"><i class="fa-solid fa-rotate-right"></i></div></div>
+                        <h2>46.2%</h2>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-top"><span>O'rtacha Chek</span><div class="stat-icon"><i class="fa-solid fa-receipt"></i></div></div>
+                        <h2>820,000 so'm</h2>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-top"><span>Mamnuniyat</span><div class="stat-icon"><i class="fa-solid fa-star"></i></div></div>
+                        <h2>4.95 / 5.0</h2>
+                    </div>
+                </div>
+
+                <div class="panel orders-panel">
+                    <div class="panel-header">
+                        <h3>Valmora VIP Mijozlari</h3>
+                    </div>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>MIJOZ</th>
+                                    <th>TELEFON</th>
+                                    <th>SHAHAR</th>
+                                    <th>BUYURTMALAR</th>
+                                    <th>JAMI XARID</th>
+                                    <th>STATUS</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><div class="customer"><div class="customer-avatar">F</div><span>Farrux Zokirov</span></div></td>
+                                    <td>+998 90 821 34 56</td>
+                                    <td>Toshkent</td>
+                                    <td>6 ta</td>
+                                    <td><strong>4,840,000 so'm</strong></td>
+                                    <td><span class="status-badge completed">Valmora VIP</span></td>
+                                </tr>
+                                <tr>
+                                    <td><div class="customer"><div class="customer-avatar">M</div><span>Madina Karimova</span></div></td>
+                                    <td>+998 93 412 88 90</td>
+                                    <td>Samarqand</td>
+                                    <td>4 ta</td>
+                                    <td><strong>3,250,000 so'm</strong></td>
+                                    <td><span class="status-badge completed">Doimiy</span></td>
+                                </tr>
+                                <tr>
+                                    <td><div class="customer"><div class="customer-avatar">J</div><span>Jasur Bekmirzayev</span></div></td>
+                                    <td>+998 99 777 12 34</td>
+                                    <td>Buxoro</td>
+                                    <td>3 ta</td>
+                                    <td><strong>2,180,000 so'm</strong></td>
+                                    <td><span class="status-badge shipping">Faol</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

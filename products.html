@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="uz" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valmora | Mahsulotlar Kolleksiyasi</title>
+
+    <!-- Google Fonts: Cormorant Garamond & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+    <!-- Valmora Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="dashboard">
+
+        <!-- ================= SIDEBAR ================= -->
+        <aside class="sidebar">
+            <div class="logo" onclick="window.location.href='index.html'">
+                <div class="logo-icon">
+                    <i class="fa-solid fa-gem"></i>
+                </div>
+                <span>VALMORA</span>
+            </div>
+
+            <div class="sidebar-title">NAVIGATSIYA</div>
+            <nav class="sidebar-menu">
+                <a href="index.html">
+                    <i class="fa-solid fa-chart-pie"></i>
+                    <span>Boshqaruv paneli</span>
+                </a>
+                <a href="products.html" class="active">
+                    <i class="fa-solid fa-box-archive"></i>
+                    <span>Mahsulotlar</span>
+                    <span class="badge">LUXURY</span>
+                </a>
+                <a href="orders.html">
+                    <i class="fa-solid fa-bag-shopping"></i>
+                    <span>Buyurtmalar</span>
+                </a>
+                <a href="customers.html">
+                    <i class="fa-solid fa-users"></i>
+                    <span>Mijozlar</span>
+                </a>
+                <div class="sidebar-title">TAHLIL</div>
+                <a href="analytics.html">
+                    <i class="fa-solid fa-chart-line"></i>
+                    <span>Statistika</span>
+                </a>
+                <a href="finance.html">
+                    <i class="fa-solid fa-wallet"></i>
+                    <span>Moliya</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-title">SOZLAMALAR</div>
+            <nav class="sidebar-menu">
+                <a href="settings.html">
+                    <i class="fa-solid fa-gear"></i>
+                    <span>Do'kon sozlamalari</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-bottom">
+                <div class="pro-card">
+                    <div class="pro-icon">
+                        <i class="fa-solid fa-crown"></i>
+                    </div>
+                    <h4>Valmora Enterprise</h4>
+                    <p>Minimalist lyuks estetika va to'g'ridan-to'g'ri yetkazib berish integratsiyasi.</p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- ================= MAIN CONTENT ================= -->
+        <main class="main-content">
+
+            <!-- TOP HEADER -->
+            <header class="top-header">
+                <div style="display: flex; align-items: center; gap: 14px;">
+                    <button class="mobile-menu-btn" id="mobileMenuBtn">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                    <div>
+                        <h1>Mahsulotlar Katalogi</h1>
+                        <p>Valmora kolleksiyasi: saralangan lyuks tovarlar va ularning marjasi.</p>
+                    </div>
+                </div>
+
+                <div class="header-actions">
+                    <button class="icon-button" id="themeToggle" title="Rejimni o'zgartirish">
+                        <i class="fa-solid fa-sun"></i>
+                    </button>
+
+                    <button class="icon-button cart-toggle-btn" title="Savatcha">
+                        <i class="fa-solid fa-bag-shopping"></i>
+                        <span class="cart-counter">0</span>
+                    </button>
+
+                    <select class="language-select">
+                        <option value="uz">O'zbek</option>
+                        <option value="ru">Русский</option>
+                        <option value="en">English</option>
+                    </select>
+
+                    <div class="profile">
+                        <div class="profile-avatar">V</div>
+                        <div class="profile-info">
+                            <strong>Valmora</strong>
+                            <span>Admin</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- PRODUCTS PAGE CONTAINER -->
+            <div class="products-page-container">
+
+                <!-- HERO BANNER -->
+                <section class="hero-banner">
+                    <div class="hero-left">
+                        <h2>
+                            <span class="hero-badge">Signature Collection</span>
+                            Valmora Eksklyuziv Dropshipping Kolleksiyasi
+                        </h2>
+                        <p>Tabiiy materiallar, sokin estetika va 50% dan yuqori sof marja kafolati.</p>
+                    </div>
+                    <div class="hero-actions">
+                        <button class="btn-gradient" id="addProductBtn">
+                            <i class="fa-solid fa-plus"></i> Yangi Tovar Qo'shish
+                        </button>
+                        <button class="btn-glass cart-toggle-btn">
+                            <i class="fa-solid fa-bag-shopping"></i> Savatcha
+                        </button>
+                    </div>
+                </section>
+
+                <!-- STATS -->
+                <section class="product-stats">
+                    <div class="product-stat-card">
+                        <div class="stat-top">
+                            <span>Jami Mahsulotlar</span>
+                            <div class="stat-icon"><i class="fa-solid fa-box"></i></div>
+                        </div>
+                        <strong id="totalProducts">8</strong>
+                    </div>
+
+                    <div class="product-stat-card">
+                        <div class="stat-top">
+                            <span>Katalogda Mavjud</span>
+                            <div class="stat-icon"><i class="fa-solid fa-check"></i></div>
+                        </div>
+                        <strong id="activeProducts">8</strong>
+                    </div>
+
+                    <div class="product-stat-card">
+                        <div class="stat-top">
+                            <span>Buyurtmalar</span>
+                            <div class="stat-icon"><i class="fa-solid fa-bag-shopping"></i></div>
+                        </div>
+                        <strong id="totalSalesStat">1,360</strong>
+                    </div>
+
+                    <div class="product-stat-card">
+                        <div class="stat-top">
+                            <span>Sof Marja Salohiyati</span>
+                            <div class="stat-icon"><i class="fa-solid fa-gem"></i></div>
+                        </div>
+                        <strong id="totalProfitStat">28.4 mln</strong>
+                    </div>
+                </section>
+
+                <!-- TOOLBAR -->
+                <section class="products-toolbar">
+                    <div class="toolbar-left">
+                        <div class="search-box">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" id="productSearch" placeholder="Tovar nomi yoki toifasi bo'yicha qidiruv...">
+                        </div>
+
+                        <div class="category-pills">
+                            <button class="cat-pill active" data-category="all">Barchasi</button>
+                            <button class="cat-pill" data-category="accessories">Aksessuarlar</button>
+                            <button class="cat-pill" data-category="fashion">Moda & Libos</button>
+                            <button class="cat-pill" data-category="home">Uy & Interyer</button>
+                            <button class="cat-pill" data-category="electronics">Elektronika</button>
+                        </div>
+                    </div>
+
+                    <select class="filter-select" id="sortFilter">
+                        <option value="popular">Eng ommabop</option>
+                        <option value="profit-high">Eng katta foyda</option>
+                        <option value="price-low">Narx: Pastdan yuqoriga</option>
+                        <option value="price-high">Narx: Yuqoridan pastga</option>
+                    </select>
+                </section>
+
+                <!-- PRODUCTS GRID -->
+                <section class="products-grid" id="productsGrid">
+                    <!-- Populated dynamically by script.js -->
+                </section>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- 1-CLICK QUICK BUY MODAL -->
+    <div class="modal-backdrop" id="quickBuyModal">
+        <div class="modal-box">
+            <div class="modal-head">
+                <div>
+                    <h3>Tezkor Buyurtma</h3>
+                    <p>Ma'lumotlaringizni kiriting va buyurtmani rasmiylashtiring.</p>
+                </div>
+                <button class="btn-close-modal" onclick="closeQuickBuy()">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div class="checkout-product-summary">
+                    <img src="" id="qbThumb" alt="" class="checkout-thumb">
+                    <div class="checkout-details">
+                        <h4 id="qbTitle">Valmora Mahsuloti</h4>
+                        <div style="display: flex; gap: 10px; margin-top: 3px;">
+                            <span class="checkout-price" id="qbPrice">-</span>
+                            <span style="font-size: 11px; color: var(--gold); font-weight: 500;">
+                                Foyda: <span id="qbProfit">-</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <form id="quickBuyForm">
+                    <div class="form-group">
+                        <label>Ism va Familiya</label>
+                        <input type="text" id="qbCustomerName" placeholder="Farrux Zokirov" required>
+                    </div>
+
+                    <div class="form-grid-2">
+                        <div class="form-group">
+                            <label>Telefon Raqam</label>
+                            <input type="tel" id="qbCustomerPhone" placeholder="+998 90 123 45 67" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Shahar / Manzil</label>
+                            <select id="qbCustomerCity">
+                                <option value="Toshkent">Toshkent shahri</option>
+                                <option value="Samarqand">Samarqand</option>
+                                <option value="Buxoro">Buxoro</option>
+                                <option value="Farg'ona">Farg'ona</option>
+                                <option value="Andijon">Andijon</option>
+                                <option value="Namangan">Namangan</option>
+                                <option value="Qashqadaryo">Qashqadaryo</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div style="background: var(--bg-subtle); border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; margin-bottom: 18px; font-size: 11px; color: var(--text-muted); display: flex; align-items: center; gap: 8px;">
+                        <i class="fa-solid fa-circle-check" style="color: var(--gold);"></i>
+                        <span>Mahsulot yetib kelgandan keyin qulay usulda to'lov qilasiz.</span>
+                    </div>
+
+                    <div class="modal-foot" style="padding: 0; background: transparent; border: none;">
+                        <button type="button" class="btn-glass" onclick="closeQuickBuy()">Bekor qilish</button>
+                        <button type="submit" class="btn-gradient" style="flex: 1; justify-content: center;">
+                            Tasdiqlash va Xarid Qilish
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- QUICK VIEW MODAL -->
+    <div class="modal-backdrop" id="quickViewModal">
+        <div class="modal-box" style="max-width: 600px;">
+            <div class="modal-head">
+                <div>
+                    <h3 id="qvTitle">Mahsulot</h3>
+                    <p id="qvCategory" style="color: var(--gold); font-size: 11px; letter-spacing: 0.1em;"></p>
+                </div>
+                <button class="btn-close-modal" onclick="closeQuickView()">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div style="width: 100%; height: 260px; border-radius: 8px; overflow: hidden; margin-bottom: 18px; background: #14161b;">
+                    <img src="" id="qvImg" alt="" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+
+                <div class="dropship-metrics" style="margin-bottom: 18px;">
+                    <div class="metric-item">
+                        <span>Sotuv Narxi</span>
+                        <strong id="qvPrice" style="color: var(--text-main); font-size: 14px;">-</strong>
+                    </div>
+                    <div class="metric-item">
+                        <span>Tannarx</span>
+                        <strong id="qvCost">-</strong>
+                    </div>
+                    <div class="metric-item profit-metric">
+                        <span>Sof Marja</span>
+                        <strong id="qvProfit" style="font-size: 14px;">-</strong>
+                    </div>
+                    <div class="metric-item">
+                        <span>Holat</span>
+                        <strong id="qvStock" style="color: var(--gold);">-</strong>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Tavsif</label>
+                    <p id="qvDescription" style="font-size: 13px; color: var(--text-muted); line-height: 1.6;"></p>
+                </div>
+
+                <div class="modal-foot" style="padding: 14px 0 0; background: transparent; border-top: 1px solid var(--border-color);">
+                    <button type="button" class="btn-glass" onclick="closeQuickView()">Yopish</button>
+                    <button type="button" class="btn-gradient" id="qvBuyBtn">
+                        Tezkor Buyurtma
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADD PRODUCT MODAL -->
+    <div class="modal-backdrop" id="productModal">
+        <div class="modal-box">
+            <div class="modal-head">
+                <div>
+                    <h3>Yangi Tovar Qo'shish</h3>
+                    <p>Valmora katalogiga yangi mahsulot kiritish.</p>
+                </div>
+                <button class="btn-close-modal" id="closeModal">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <form id="productForm">
+                    <div class="form-group">
+                        <label>Tovar Nomi</label>
+                        <input type="text" id="productName" placeholder="Valmora Cashmere Knit" required>
+                    </div>
+
+                    <div class="form-grid-2">
+                        <div class="form-group">
+                            <label>Sotuv Narxi (so'm)</label>
+                            <input type="number" id="productPrice" placeholder="790000" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Tannarx (so'm)</label>
+                            <input type="number" id="productCost" placeholder="320000" required>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <button type="button" class="btn-glass" id="btnAiOptimize" style="border-color: rgba(212,175,55,0.4); color: var(--gold); font-size: 11px; padding: 6px 12px; display: inline-flex; align-items: center; gap: 6px;" onclick="triggerAiMargin()">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> Valmora AI Smart Margin Optimizer
+                        </button>
+                        <span id="aiVerdictBadge" style="font-size: 11px; color: var(--text-dim);"></span>
+                    </div>
+
+                    <div class="preview-profit-box">
+                        <span>Taxminiy Sof Foyda:</span>
+                        <strong id="profitPreview">0 so'm</strong>
+                    </div>
+
+                    <div class="form-grid-2">
+                        <div class="form-group">
+                            <label>Kategoriya</label>
+                            <select id="productCategory">
+                                <option value="accessories">Aksessuarlar</option>
+                                <option value="fashion">Moda & Libos</option>
+                                <option value="home">Uy & Interyer</option>
+                                <option value="electronics">Elektronika</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Rasm URL</label>
+                            <input type="url" id="productImage" placeholder="https://images.unsplash.com/...">
+                        </div>
+                    </div>
+
+                    <div class="modal-foot" style="padding: 14px 0 0; background: transparent; border-top: 1px solid var(--border-color);">
+                        <button type="button" class="btn-glass" id="cancelProduct">Bekor qilish</button>
+                        <button type="submit" class="btn-gradient">
+                            Katalogga Qo'shish
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDING CART DRAWER -->
+    <div class="cart-overlay" id="cartOverlay">
+        <div class="cart-drawer">
+            <div class="cart-header">
+                <h3><i class="fa-solid fa-bag-shopping" style="color: var(--gold); font-size: 15px;"></i> Savatcha</h3>
+                <button class="btn-close-modal" id="closeCartBtn">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="cart-items-list" id="cartItemsList">
+                <!-- Injected via JavaScript -->
+            </div>
+
+            <div class="cart-footer">
+                <div class="cart-promo">
+                    <input type="text" placeholder="Promokod">
+                    <button type="button" onclick="showToast('Chegirma promokodi qo\'llandi', 'success')">Qo'llash</button>
+                </div>
+
+                <div class="cart-total-row">
+                    <span>Jami:</span>
+                    <strong id="cartTotalPrice">0 so'm</strong>
+                </div>
+
+                <button class="btn-checkout" id="cartCheckoutBtn">
+                    Rasmiylashtirish
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <canvas id="confettiCanvas"></canvas>
+    <script src="script.js"></script>
+    <script>
+        async function triggerAiMargin() {
+            sound.playClick();
+            const costInput = document.getElementById("productCost");
+            const priceInput = document.getElementById("productPrice");
+            const categorySelect = document.getElementById("productCategory");
+            const badge = document.getElementById("aiVerdictBadge");
+
+            const cost = Number(costInput.value);
+            if (!cost || cost <= 0) {
+                showToast("Avval mahsulot tannarxini kiriting", "error");
+                costInput.focus();
+                return;
+            }
+
+            badge.textContent = "AI hisoblamoqda...";
+            const res = await valmoraApi.runAiOptimizer(cost, categorySelect.value);
+            if (res && res.analysis) {
+                priceInput.value = res.analysis.recommended_price;
+                const profitEl = document.getElementById("profitPreview");
+                if (profitEl) {
+                    profitEl.textContent = formatSum(res.analysis.recommended_price - cost) + ` (${res.analysis.projected_margin} sof marja)`;
+                }
+                badge.innerHTML = `<i class="fa-solid fa-check" style="color: #10b981;"></i> ${res.analysis.projected_margin} marja tavsiya etildi`;
+                sound.playSuccess();
+                showToast("Valmora AI: Optimal lyuks narx hisoblab chiqildi", "success");
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="uz" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valmora | Buyurtmalar Nazorati</title>
+
+    <!-- Google Fonts: Cormorant Garamond & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+    <!-- Valmora Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="dashboard">
+
+        <!-- ================= SIDEBAR ================= -->
+        <aside class="sidebar">
+
+            <div class="logo" onclick="window.location.href='index.html'">
+                <div class="logo-icon">
+                    <i class="fa-solid fa-gem"></i>
+                </div>
+                <span>VALMORA</span>
+            </div>
+
+            <div class="sidebar-title">NAVIGATSIYA</div>
+
+            <nav class="sidebar-menu">
+                <a href="index.html">
+                    <i class="fa-solid fa-chart-pie"></i>
+                    <span>Boshqaruv paneli</span>
+                </a>
+
+                <a href="products.html">
+                    <i class="fa-solid fa-box-archive"></i>
+                    <span>Mahsulotlar</span>
+                </a>
+
+                <a href="orders.html" class="active">
+                    <i class="fa-solid fa-bag-shopping"></i>
+                    <span>Buyurtmalar</span>
+                    <span class="badge" id="sidebarOrderBadge">YANGI</span>
+                </a>
+
+                <a href="customers.html">
+                    <i class="fa-solid fa-users"></i>
+                    <span>Mijozlar</span>
+                </a>
+
+                <div class="sidebar-title">TAHLIL</div>
+
+                <a href="analytics.html">
+                    <i class="fa-solid fa-chart-line"></i>
+                    <span>Statistika</span>
+                </a>
+
+                <a href="finance.html">
+                    <i class="fa-solid fa-wallet"></i>
+                    <span>Moliya</span>
+                </a>
+
+                <div class="sidebar-title">SOZLAMALAR</div>
+
+                <a href="settings.html">
+                    <i class="fa-solid fa-gear"></i>
+                    <span>Sozlamalar</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-bottom">
+                <div class="pro-card">
+                    <div class="pro-icon">
+                        <i class="fa-solid fa-truck-fast"></i>
+                    </div>
+                    <h4>Valmora Logistika</h4>
+                    <p>Mijozlarga yetkazib berish va trek-raqamlarni monitoring qilish.</p>
+                </div>
+            </div>
+
+        </aside>
+
+        <!-- ================= MAIN CONTENT ================= -->
+        <main class="main-content">
+
+            <!-- HEADER -->
+            <header class="top-header">
+                <div style="display: flex; align-items: center; gap: 14px;">
+                    <button class="mobile-menu-btn" id="mobileMenuBtn">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                    <div>
+                        <h1>Buyurtmalar Nazorati</h1>
+                        <p>Valmora mijozlaridan kelib tushgan buyurtmalar ro'yxati va ularning holati.</p>
+                    </div>
+                </div>
+
+                <div class="header-actions">
+                    <button class="icon-button" id="themeToggle" title="Rejimni o'zgartirish">
+                        <i class="fa-solid fa-sun"></i>
+                    </button>
+
+                    <button class="icon-button cart-toggle-btn" title="Savatcha">
+                        <i class="fa-solid fa-bag-shopping"></i>
+                        <span class="cart-counter">0</span>
+                    </button>
+
+                    <div class="profile">
+                        <div class="profile-avatar">V</div>
+                        <div class="profile-info">
+                            <strong>Valmora</strong>
+                            <span>Admin</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- ORDERS CONTAINER -->
+            <div class="products-page-container">
+
+                <!-- STATS -->
+                <section class="product-stats">
+                    <div class="product-stat-card">
+                        <div class="stat-top">
+                            <span>Jami Buyurtmalar</span>
+                            <div class="stat-icon"><i class="fa-solid fa-bag-shopping"></i></div>
+                        </div>
+                        <strong id="ordersTotalCount">0</strong>
+                    </div>
+
+                    <div class="product-stat-card">
+                        <div class="stat-top">
+                            <span>Kutilmoqda</span>
+                            <div class="stat-icon"><i class="fa-solid fa-clock"></i></div>
+                        </div>
+                        <strong id="ordersPendingCount">0</strong>
+                    </div>
+
+                    <div class="product-stat-card">
+                        <div class="stat-top">
+                            <span>Yetkazilmoqda</span>
+                            <div class="stat-icon"><i class="fa-solid fa-truck-fast"></i></div>
+                        </div>
+                        <strong id="ordersShippingCount">0</strong>
+                    </div>
+
+                    <div class="product-stat-card">
+                        <div class="stat-top">
+                            <span>Yakunlangan</span>
+                            <div class="stat-icon"><i class="fa-solid fa-check"></i></div>
+                        </div>
+                        <strong id="ordersCompletedCount">0</strong>
+                    </div>
+                </section>
+
+                <!-- TOOLBAR -->
+                <section class="products-toolbar">
+                    <div class="toolbar-left">
+                        <div class="search-box">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" id="orderSearchInput" placeholder="Mijoz ismi yoki buyurtma ID...">
+                        </div>
+
+                        <div class="category-pills">
+                            <button class="cat-pill active" data-order-status="all">Barchasi</button>
+                            <button class="cat-pill" data-order-status="pending">Kutilmoqda</button>
+                            <button class="cat-pill" data-order-status="shipping">Yetkazilmoqda</button>
+                            <button class="cat-pill" data-order-status="completed">Yakunlangan</button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ORDERS TABLE -->
+                <div class="panel orders-panel">
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>BUYURTMA ID</th>
+                                    <th>MIJOZ & MANZIL</th>
+                                    <th>TOVAR</th>
+                                    <th>SANA</th>
+                                    <th>SUMMA</th>
+                                    <th>HOLATI</th>
+                                    <th>AMAL</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ordersFullTbody">
+                                <!-- Populated dynamically by script -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+
+        </main>
+
+    </div>
+
+    <!-- Celebration Confetti Layer -->
+    <canvas id="confettiCanvas"></canvas>
+
+    <!-- Master Script -->
+    <script src="script.js"></script>
+
+    <script>
+        let currentOrderStatus = "all";
+        let currentOrderQuery = "";
+
+        function renderOrdersPage() {
+            let orders = getStoredOrders();
+            const tbody = document.getElementById("ordersFullTbody");
+            if (!tbody) return;
+
+            document.getElementById("ordersTotalCount").textContent = orders.length;
+            document.getElementById("ordersPendingCount").textContent = orders.filter(o => o.status === 'pending').length;
+            document.getElementById("ordersShippingCount").textContent = orders.filter(o => o.status === 'shipping').length;
+            document.getElementById("ordersCompletedCount").textContent = orders.filter(o => o.status === 'completed').length;
+
+            if (currentOrderStatus !== "all") {
+                orders = orders.filter(o => o.status === currentOrderStatus);
+            }
+
+            if (currentOrderQuery.trim()) {
+                const q = currentOrderQuery.toLowerCase();
+                orders = orders.filter(o => 
+                    o.id.toLowerCase().includes(q) ||
+                    (o.customer && o.customer.toLowerCase().includes(q)) ||
+                    (o.product && o.product.toLowerCase().includes(q)) ||
+                    (o.city && o.city.toLowerCase().includes(q))
+                );
+            }
+
+            if (orders.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 50px 20px; color: var(--text-dim);">
+                            <i class="fa-solid fa-folder-open" style="font-size: 28px; color: var(--gold); margin-bottom: 8px; display: block;"></i>
+                            Buyurtmalar topilmadi
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = orders.map(o => `
+                <tr>
+                    <td class="order-id">${o.id}</td>
+                    <td>
+                        <div class="customer">
+                            <div class="customer-avatar">${o.customer ? o.customer[0].toUpperCase() : 'V'}</div>
+                            <div>
+                                <span>${o.customer}</span>
+                                <div style="font-size: 11px; color: var(--text-dim);">${o.city || 'Toshkent'} ${o.phone ? '• ' + o.phone : ''}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td><strong>${o.product}</strong></td>
+                    <td>${o.date}</td>
+                    <td><strong style="color: var(--text-main); font-size: 13px;">${formatSum(o.price)}</strong></td>
+                    <td>
+                        <select onchange="updateOrderStatus('${o.id}', this.value)" class="filter-select" style="height: 32px; padding: 0 8px; font-size: 11px; border-radius: 6px;">
+                            <option value="pending" ${o.status === 'pending' ? 'selected' : ''}>Kutilmoqda</option>
+                            <option value="shipping" ${o.status === 'shipping' ? 'selected' : ''}>Yetkazilmoqda</option>
+                            <option value="completed" ${o.status === 'completed' ? 'selected' : ''}>Yakunlangan</option>
+                            <option value="cancelled" ${o.status === 'cancelled' ? 'selected' : ''}>Bekor qilingan</option>
+                        </select>
+                    </td>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <button class="btn-glass" style="height: 32px; padding: 0 10px; font-size: 11px; border-color: rgba(212,175,55,0.4);" onclick="openOrderCert('${o.id}')" title="Valmora Rasmiy Sertifikati & Invoys">
+                                <i class="fa-solid fa-gem" style="color: var(--gold);"></i> Sertifikat
+                            </button>
+                            <button class="btn-delete-card" onclick="deleteOrder('${o.id}')" title="O'chirish">
+                                <i class="fa-regular fa-trash-can"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join("");
+        }
+
+        function openOrderCert(orderId) {
+            sound.playClick();
+            const orders = getStoredOrders();
+            const order = orders.find(o => o.id === orderId);
+            if (order) {
+                valmoraApi.openCertificateModal(order);
+            }
+        }
+
+        function updateOrderStatus(id, newStatus) {
+            sound.playClick();
+            let orders = getStoredOrders();
+            const order = orders.find(o => o.id === id);
+            if (order) {
+                order.status = newStatus;
+                saveStoredOrders(orders);
+                renderOrdersPage();
+                showToast(`Buyurtma holati o'zgartirildi`, "success");
+            }
+        }
+
+        function deleteOrder(id) {
+            sound.playClick();
+            if (confirm("Buyurtmani o'chirmoqchimisiz?")) {
+                let orders = getStoredOrders();
+                orders = orders.filter(o => o.id !== id);
+                saveStoredOrders(orders);
+                renderOrdersPage();
+                showToast("Buyurtma o'chirildi", "success");
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            renderOrdersPage();
+
+            document.querySelectorAll("[data-order-status]").forEach(btn => {
+                btn.addEventListener("click", function() {
+                    sound.playClick();
+                    document.querySelectorAll("[data-order-status]").forEach(b => b.classList.remove("active"));
+                    this.classList.add("active");
+                    currentOrderStatus = this.getAttribute("data-order-status");
+                    renderOrdersPage();
+                });
+            });
+
+            const searchInput = document.getElementById("orderSearchInput");
+            if (searchInput) {
+                searchInput.addEventListener("input", (e) => {
+                    currentOrderQuery = e.target.value;
+                    renderOrdersPage();
+                });
+            }
+        });
+    </script>
+</body>
+</html>

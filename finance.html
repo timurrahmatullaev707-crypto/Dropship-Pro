@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="uz" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valmora | Moliya & Marja</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="dashboard">
+        <aside class="sidebar">
+            <div class="logo" onclick="window.location.href='index.html'">
+                <div class="logo-icon"><i class="fa-solid fa-gem"></i></div>
+                <span>VALMORA</span>
+            </div>
+            <div class="sidebar-title">NAVIGATSIYA</div>
+            <nav class="sidebar-menu">
+                <a href="index.html"><i class="fa-solid fa-chart-pie"></i><span>Boshqaruv paneli</span></a>
+                <a href="products.html"><i class="fa-solid fa-box-archive"></i><span>Mahsulotlar</span></a>
+                <a href="orders.html"><i class="fa-solid fa-bag-shopping"></i><span>Buyurtmalar</span></a>
+                <a href="customers.html"><i class="fa-solid fa-users"></i><span>Mijozlar</span></a>
+                <div class="sidebar-title">TAHLIL</div>
+                <a href="analytics.html"><i class="fa-solid fa-chart-line"></i><span>Statistika</span></a>
+                <a href="finance.html" class="active"><i class="fa-solid fa-wallet"></i><span>Moliya</span></a>
+                <div class="sidebar-title">SOZLAMALAR</div>
+                <a href="settings.html"><i class="fa-solid fa-gear"></i><span>Sozlamalar</span></a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="top-header">
+                <div>
+                    <h1>Moliya & Foyda Marjasi</h1>
+                    <p>Valmora daromadlari, tannarx va hisob-kitoblar balansi.</p>
+                </div>
+                <div class="header-actions">
+                    <button class="icon-button" id="themeToggle"><i class="fa-solid fa-sun"></i></button>
+                    <button class="icon-button cart-toggle-btn"><i class="fa-solid fa-bag-shopping"></i><span class="cart-counter">0</span></button>
+                    <div class="profile"><div class="profile-avatar">V</div><div class="profile-info"><strong>Valmora</strong><span>Admin</span></div></div>
+                </div>
+            </header>
+
+            <div class="products-page-container">
+                <div class="stats">
+                    <div class="stat-card">
+                        <div class="stat-top"><span>Umumiy Tushum</span><div class="stat-icon"><i class="fa-solid fa-wallet"></i></div></div>
+                        <h2>98,400,000 so'm</h2>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-top"><span>Yetkazib Beruvchi Tannarxi</span><div class="stat-icon"><i class="fa-solid fa-receipt"></i></div></div>
+                        <h2>44,200,000 so'm</h2>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-top"><span>Sof Foyda</span><div class="stat-icon"><i class="fa-solid fa-gem"></i></div></div>
+                        <h2 style="color: var(--gold);">54,200,000 so'm</h2>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-top"><span>Sof Marja</span><div class="stat-icon"><i class="fa-solid fa-percent"></i></div></div>
+                        <h2>55.1%</h2>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-header">
+                        <h3>Moliya Tranzaksiyalari Tarixi</h3>
+                        <button class="btn-glass" onclick="showToast('Excel hisoboti shakllantirildi', 'success')">
+                            <i class="fa-solid fa-download"></i> Hisobotni Yuklash
+                        </button>
+                    </div>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>TUR</th>
+                                    <th>TAVSIF</th>
+                                    <th>SANA</th>
+                                    <th>SUMMA</th>
+                                    <th>HOLATI</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>#TRX-810</td>
+                                    <td><span class="status-badge completed">Tushum</span></td>
+                                    <td>Valmora Chronograph Watch sotuvi</td>
+                                    <td>Bugun, 18:30</td>
+                                    <td><strong style="color: var(--gold);">+890,000 so'm</strong></td>
+                                    <td>Tasdiqlangan</td>
+                                </tr>
+                                <tr>
+                                    <td>#TRX-809</td>
+                                    <td><span class="status-badge completed">Tushum</span></td>
+                                    <td>Nappa Leather Travel Duffle sotuvi</td>
+                                    <td>Kecha, 21:00</td>
+                                    <td><strong style="color: var(--gold);">+1,150,000 so'm</strong></td>
+                                    <td>Tasdiqlangan</td>
+                                </tr>
+                                <tr>
+                                    <td>#TRX-808</td>
+                                    <td><span class="status-badge pending">Chiqim</span></td>
+                                    <td>Ta'minotchi xarajat to'lovi</td>
+                                    <td>Kecha, 15:45</td>
+                                    <td><strong style="color: var(--terracotta);">-490,000 so'm</strong></td>
+                                    <td>To'langan</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
