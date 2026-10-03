@@ -63,23 +63,23 @@
                 <div class="stats">
                     <div class="stat-card">
                         <div class="stat-top"><span>Tashriflar</span><div class="stat-icon"><i class="fa-solid fa-eye"></i></div></div>
-                        <h2>42,180</h2>
-                        <div class="growth positive"><i class="fa-solid fa-arrow-trend-up"></i> +18.4%</div>
+                        <h2>—</h2>
+                        <div class="growth"><span>Visitor tracking ulanmagan</span></div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-top"><span>Konversiya</span><div class="stat-icon"><i class="fa-solid fa-chart-pie"></i></div></div>
-                        <h2>3.92%</h2>
-                        <div class="growth positive"><i class="fa-solid fa-arrow-trend-up"></i> +0.6%</div>
+                        <h2>—</h2>
+                        <div class="growth"><span>Session tracking ulanmagan</span></div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-top"><span>Savatchaga Qo'shish</span><div class="stat-icon"><i class="fa-solid fa-bag-shopping"></i></div></div>
-                        <h2>3,410</h2>
-                        <div class="growth positive"><i class="fa-solid fa-arrow-trend-up"></i> +11.2%</div>
+                        <h2>—</h2>
+                        <div class="growth"><span>Savatcha eventlari yozilmaydi</span></div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-top"><span>O'rtacha Marja</span><div class="stat-icon"><i class="fa-solid fa-gem"></i></div></div>
-                        <h2>52.4%</h2>
-                        <div class="growth positive"><i class="fa-solid fa-arrow-trend-up"></i> Barqaror</div>
+                        <h2 id="analyticsMargin">—</h2>
+                        <div class="growth"><span>Buyurtmalardan hisoblangan</span></div>
                     </div>
                 </div>
 
@@ -91,35 +91,9 @@
                                 <p>Savdoda yuqori talabga ega yo'nalishlar</p>
                             </div>
                         </div>
-                        <div style="display: flex; flex-direction: column; gap: 14px;">
-                            <div>
-                                <div style="display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 12px;">
-                                    <span>Aksessuarlar (Xronograf, Optika)</span>
-                                    <strong>48%</strong>
-                                </div>
-                                <div style="height: 6px; background: var(--bg-subtle); border-radius: 4px; overflow: hidden;">
-                                    <div style="width: 48%; height: 100%; background: var(--gold);"></div>
-                                </div>
-                            </div>
-                            <div>
-                                <div style="display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 12px;">
-                                    <span>Moda & Charm (Duffle Bag, Kashmir)</span>
-                                    <strong>32%</strong>
-                                </div>
-                                <div style="height: 6px; background: var(--bg-subtle); border-radius: 4px; overflow: hidden;">
-                                    <div style="width: 32%; height: 100%; background: var(--sand);"></div>
-                                </div>
-                            </div>
-                            <div>
-                                <div style="display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 12px;">
-                                    <span>Uy & Interyer (Diffuzor, Pichoq)</span>
-                                    <strong>20%</strong>
-                                </div>
-                                <div style="height: 6px; background: var(--bg-subtle); border-radius: 4px; overflow: hidden;">
-                                    <div style="width: 20%; height: 100%; background: var(--olive);"></div>
-                                </div>
-                            </div>
-                        </div>
+                        <ul id="analyticsCategoryShare" style="list-style:none;display:flex;flex-direction:column;gap:10px;font-size:12px;">
+                            <li>Buyurtmalar yuklanmoqda...</li>
+                        </ul>
                     </div>
 
                     <div class="panel">
@@ -129,12 +103,8 @@
                                 <p>Asosiy yetkazib berish geografiyasi</p>
                             </div>
                         </div>
-                        <ul style="list-style: none; display: flex; flex-direction: column; gap: 10px; font-size: 12px;">
-                            <li style="display: flex; justify-content: space-between;"><span>Toshkent</span> <strong>52%</strong></li>
-                            <li style="display: flex; justify-content: space-between;"><span>Samarqand</span> <strong>19%</strong></li>
-                            <li style="display: flex; justify-content: space-between;"><span>Farg'ona</span> <strong>14%</strong></li>
-                            <li style="display: flex; justify-content: space-between;"><span>Buxoro</span> <strong>10%</strong></li>
-                            <li style="display: flex; justify-content: space-between;"><span>Boshqa</span> <strong>5%</strong></li>
+                        <ul id="analyticsRegions" style="list-style: none; display: flex; flex-direction: column; gap: 10px; font-size: 12px;">
+                            <li>Buyurtmalar yuklanmoqda...</li>
                         </ul>
                     </div>
                 </div>
@@ -144,5 +114,60 @@
     <script src="translations.js"></script>
     <script src="api-config.js"></script>
     <script src="script.js"></script>
+    <script>
+        const escapeAnalyticsText = value => String(value ?? "").replace(/[&<>"']/g, character => ({
+            "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+        })[character]);
+
+        document.addEventListener("DOMContentLoaded", async () => {
+            const categoryList = document.getElementById("analyticsCategoryShare");
+            const regionList = document.getElementById("analyticsRegions");
+            try {
+                const [overviewResponse, ordersResponse, productsResponse] = await Promise.all([
+                    valmoraApi.request("/api/overview"),
+                    valmoraApi.request("/api/orders"),
+                    valmoraApi.fetchProducts()
+                ]);
+                const overview = await overviewResponse.json();
+                const ordersResult = await ordersResponse.json();
+                if (!overviewResponse.ok || !overview.success ||
+                        !ordersResponse.ok || !ordersResult.success) {
+                    throw new Error(overview.error || ordersResult.error || "Tahlil ma'lumotlarini yuklab bo'lmadi.");
+                }
+
+                document.getElementById("analyticsMargin").textContent =
+                    `${Number(overview.metrics.profit_margin_pct) || 0}%`;
+
+                const productsById = new Map(productsResponse.map(product => [product.id, product]));
+                const categoryCounts = new Map();
+                const regionCounts = new Map();
+                (ordersResult.orders || []).filter(order => order.status !== "cancelled").forEach(order => {
+                    const region = String(order.shipping_address || "").split(",")[0].trim() || "Noma'lum";
+                    regionCounts.set(region, (regionCounts.get(region) || 0) + 1);
+                    (order.items || []).forEach(item => {
+                        const product = productsById.get(item.id);
+                        const category = product?.category_name || product?.category || "Boshqa";
+                        categoryCounts.set(category, (categoryCounts.get(category) || 0) + (Number(item.qty) || 0));
+                    });
+                });
+
+                const renderShares = (counts, total, emptyMessage) => {
+                    const entries = [...counts.entries()].sort((a, b) => b[1] - a[1]);
+                    return entries.length ? entries.map(([label, count]) => `
+                        <li style="display:flex;justify-content:space-between;gap:10px;">
+                            <span>${escapeAnalyticsText(label)}</span>
+                            <strong>${Math.round(count / total * 100)}%</strong>
+                        </li>`).join("") : `<li>${emptyMessage}</li>`;
+                };
+                const categoryTotal = [...categoryCounts.values()].reduce((sum, count) => sum + count, 0);
+                const regionTotal = [...regionCounts.values()].reduce((sum, count) => sum + count, 0);
+                categoryList.innerHTML = renderShares(categoryCounts, categoryTotal, "Hali buyurtma yo'q.");
+                regionList.innerHTML = renderShares(regionCounts, regionTotal, "Hali buyurtma yo'q.");
+            } catch (error) {
+                categoryList.textContent = error.message || "Tahlilni yuklab bo'lmadi.";
+                regionList.textContent = error.message || "Tahlilni yuklab bo'lmadi.";
+            }
+        });
+    </script>
 </body>
 </html>

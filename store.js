@@ -74,8 +74,32 @@ const luxuryAudio = new ValmoraAudio();
 // State
 let allProducts = [];
 let filteredProducts = [];
-let cart = JSON.parse(localStorage.getItem('valmora_cart') || '[]');
-let wishlist = JSON.parse(localStorage.getItem('valmora_wishlist') || '[]');
+function readLocalArray(key) {
+    try {
+        const value = JSON.parse(localStorage.getItem(key) || '[]');
+        return Array.isArray(value) ? value : [];
+    } catch (error) {
+        console.error(`VALMORA local storage data is invalid (${key}):`, error);
+        return [];
+    }
+}
+
+function escapeStoreHtml(value) {
+    return String(value ?? '').replace(/[&<>"']/g, character => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    })[character]);
+}
+
+function isValidUzbekPhone(value) {
+    const digits = String(value || '').replace(/\D/g, '');
+    return digits.length === 9 || (digits.length === 12 && digits.startsWith('998'));
+}
+
+let cart = readLocalArray('valmora_cart').filter(item =>
+    item && typeof item.id === 'string' && Number.isInteger(Number(item.qty)) &&
+    Number(item.qty) > 0 && Number.isFinite(Number(item.price)) && Number(item.price) >= 0
+);
+let wishlist = readLocalArray('valmora_wishlist').filter(id => typeof id === 'string');
 let currentPromoDiscount = 0; // percentage
 let selectedProductForInstantOrder = null;
 
@@ -155,8 +179,8 @@ function submitOnboardingForm(e) {
         showStoreToast("Iltimos, ism va familiyangizni to'liq kiriting", "error");
         return;
     }
-    if (!phone || phone.length < 9) {
-        showStoreToast("Iltimos, telefon raqamingizni kiriting", "error");
+    if (!isValidUzbekPhone(phone)) {
+        showStoreToast("Telefon raqamini +998 bilan yoki 9 xonali mahalliy formatda kiriting", "error");
         return;
     }
     if (!address || address.length < 4) {
@@ -339,7 +363,7 @@ function renderProducts() {
 
                 <!-- Floating Badge -->
                 <span class="card-floating-badge">
-                    <i class="fa-solid fa-gem" style="margin-right: 4px;"></i> ${p.badge || 'LUXURY'}
+                    <i class="fa-solid fa-gem" style="margin-right: 4px;"></i> ${escapeStoreHtml(p.badge || 'LUXURY')}
                 </span>
 
                 <!-- Wishlist Heart -->
@@ -351,7 +375,7 @@ function renderProducts() {
 
                 <!-- Image with Zoom & Quick View -->
                 <div class="card-image-wrap" onclick="openQuickView('${p.id}')">
-                    <img src="${p.image}" alt="${p.title}" loading="lazy">
+                    <img src="${escapeStoreHtml(p.image)}" alt="${escapeStoreHtml(p.title)}" loading="lazy">
                     <button class="card-quick-view-btn" onclick="openQuickView('${p.id}'); event.stopPropagation();">
                         <i class="fa-solid fa-eye"></i> ${typeof getTranslation === 'function' ? getTranslation('btn_quick_view', 'Batafsil ko\'rish') : 'Batafsil ko\'rish'}
                     </button>
@@ -360,15 +384,15 @@ function renderProducts() {
                 <!-- Card Content -->
                 <div class="card-content">
                     <div class="card-category-row">
-                        <span>${p.category_name || p.category || 'Atelier'}</span>
+                        <span>${escapeStoreHtml(p.category_name || p.category || 'Atelier')}</span>
                         <span class="card-stock-pill ${isLowStock ? 'low' : 'in-stock'}">${stockText}</span>
                     </div>
 
                     <h3 class="card-title" onclick="openQuickView('${p.id}')" style="cursor: pointer;">
-                        ${p.title}
+                        ${escapeStoreHtml(p.title)}
                     </h3>
 
-                    <p class="card-desc">${p.description || ''}</p>
+                    <p class="card-desc">${escapeStoreHtml(p.description || '')}</p>
 
                     <div class="card-rating">
                         <i class="fa-solid fa-star"></i>
@@ -520,10 +544,11 @@ function updateWishlistBadge() {
 function addToCart(productId, qty = 1) {
     luxuryAudio.playClick();
     const prod = allProducts.find(p => p.id === productId);
-    if (!prod) return;
+    if (!prod || !Number.isInteger(qty) || qty < 1) return;
 
     const existing = cart.find(item => item.id === productId);
-    if (Number(prod.stock ?? 0) < (existing?.qty || 0) + qty) {
+    if ((existing?.qty || 0) + qty > 50 ||
+            Number(prod.stock ?? 0) < (existing?.qty || 0) + qty) {
         showStoreToast("Omborda so'ralgan miqdorda mahsulot qolmagan.", "error");
         return;
     }
@@ -578,9 +603,9 @@ function renderCartDrawerItems(totalPrice) {
 
     listEl.innerHTML = cart.map((item, idx) => `
         <div style="display: flex; gap: 14px; align-items: center; padding: 14px 0; border-bottom: 1px solid var(--border-subtle);">
-            <img src="${item.image}" alt="${item.title}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border-color);">
+            <img src="${escapeStoreHtml(item.image)}" alt="${escapeStoreHtml(item.title)}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border-color);">
             <div style="flex: 1;">
-                <h4 style="font-family: var(--font-serif); font-size: 14px; margin-bottom: 4px; color: var(--text-main);">${item.title}</h4>
+                <h4 style="font-family: var(--font-serif); font-size: 14px; margin-bottom: 4px; color: var(--text-main);">${escapeStoreHtml(item.title)}</h4>
                 <div style="font-size: 13px; color: var(--gold); font-weight: 600;">${formatMoney(item.price)} so'm</div>
             </div>
             <div style="display: flex; align-items: center; gap: 8px;">
@@ -626,12 +651,12 @@ function removeCartItem(idx) {
 function toggleCartDrawer() {
     luxuryAudio.playClick();
     const overlay = document.getElementById('storeCartOverlay');
-    if (overlay) overlay.classList.toggle('active');
+    if (overlay) overlay.classList.toggle('open');
 }
 
 function closeCartDrawer() {
     const overlay = document.getElementById('storeCartOverlay');
-    if (overlay) overlay.classList.remove('active');
+    if (overlay) overlay.classList.remove('open');
 }
 
 function applyPromoCode() {
@@ -664,18 +689,18 @@ function openQuickView(productId) {
     content.innerHTML = `
         <div style="display: grid; grid-template-columns: 1fr 1.1fr; gap: 28px; align-items: start;">
             <div style="position: relative; border-radius: 12px; overflow: hidden; border: 1px solid var(--border-color); background: #0b0c0f;">
-                <img src="${prod.image}" alt="${prod.title}" style="width: 100%; height: 380px; object-fit: cover;">
+                <img src="${escapeStoreHtml(prod.image)}" alt="${escapeStoreHtml(prod.title)}" style="width: 100%; height: 380px; object-fit: cover;">
                 <span class="card-floating-badge" style="top: 14px; left: 14px;">
-                    ${prod.badge || 'LUXURY'}
+                    ${escapeStoreHtml(prod.badge || 'LUXURY')}
                 </span>
             </div>
 
             <div>
                 <div style="font-size: 11px; color: var(--gold); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 6px;">
-                    ${prod.category_name || prod.category} • Valmora Atelier
+                    ${escapeStoreHtml(prod.category_name || prod.category)} • Valmora Atelier
                 </div>
                 <h2 style="font-family: var(--font-serif); font-size: 24px; color: var(--text-main); margin-bottom: 12px; line-height: 1.25;">
-                    ${prod.title}
+                    ${escapeStoreHtml(prod.title)}
                 </h2>
                 <div style="display: flex; align-items: baseline; gap: 12px; margin-bottom: 16px;">
                     <span style="font-family: var(--font-serif); font-size: 26px; font-weight: 700; color: var(--gold);">
@@ -687,7 +712,7 @@ function openQuickView(productId) {
                 </div>
 
                 <p style="font-size: 13px; color: var(--text-muted); line-height: 1.6; margin-bottom: 20px;">
-                    ${prod.description || 'Valmora kolleksiyasining eksklyuziv namunasi. Yuqori sifatli materiallar, mukammal chidamlilik va zamonaviy uslub.'}
+                    ${escapeStoreHtml(prod.description || 'Valmora kolleksiyasining eksklyuziv namunasi. Yuqori sifatli materiallar, mukammal chidamlilik va zamonaviy uslub.')}
                 </p>
 
                 <!-- Delivery Notice Box -->
@@ -744,10 +769,10 @@ function openInstantOrder(productId) {
     if (summaryEl) {
         summaryEl.innerHTML = `
             <div style="display: flex; gap: 14px; align-items: center; padding-bottom: 12px; border-bottom: 1px solid var(--border-color);">
-                <img src="${prod.image}" alt="${prod.title}" style="width: 54px; height: 54px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border-color);">
+                <img src="${escapeStoreHtml(prod.image)}" alt="${escapeStoreHtml(prod.title)}" style="width: 54px; height: 54px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border-color);">
                 <div style="flex: 1;">
-                    <h4 style="font-family: var(--font-serif); font-size: 14px; color: var(--text-main);">${prod.title}</h4>
-                    <span style="font-size: 11px; color: var(--text-dim);">${prod.category_name || 'Atelier'} • 1 dona</span>
+                    <h4 style="font-family: var(--font-serif); font-size: 14px; color: var(--text-main);">${escapeStoreHtml(prod.title)}</h4>
+                    <span style="font-size: 11px; color: var(--text-dim);">${escapeStoreHtml(prod.category_name || 'Atelier')} • 1 dona</span>
                 </div>
                 <div style="font-family: var(--font-serif); font-size: 16px; font-weight: 700; color: var(--gold);">
                     ${formatMoney(prod.price)} so'm
@@ -793,7 +818,7 @@ function openCartCheckout() {
             <div style="max-height: 140px; overflow-y: auto; padding-right: 6px; margin-bottom: 10px;">
                 ${cart.map(itm => `
                     <div style="display: flex; justify-content: space-between; font-size: 13px; padding: 4px 0;">
-                        <span style="color: var(--text-main);">${itm.title} (x${itm.qty})</span>
+                        <span style="color: var(--text-main);">${escapeStoreHtml(itm.title)} (x${itm.qty})</span>
                         <span style="color: var(--gold);">${formatMoney(itm.price * itm.qty)} so'm</span>
                     </div>
                 `).join('')}
@@ -832,23 +857,14 @@ async function handleCheckoutSubmit(e) {
         showStoreToast("Iltimos, ismingizni to'liq kiriting", "error");
         return;
     }
-    if (!phone || phone.length < 9) {
-        showStoreToast("Iltimos, telefon raqamingizni kiriting", "error");
+    if (!isValidUzbekPhone(phone)) {
+        showStoreToast("Telefon raqamini +998 bilan yoki 9 xonali mahalliy formatda kiriting", "error");
         return;
     }
     if (!address || address.length < 4) {
         showStoreToast("Iltimos, yetkazib berish manzilini aniq kiriting", "error");
         return;
     }
-
-    // Save updated customer details
-    saveCustomer({
-        name: name,
-        phone: phone,
-        region: region,
-        address: address,
-        fullAddress: `${region}, ${address}`
-    });
 
     // Prepare items list
     let orderItems = [];
@@ -900,6 +916,13 @@ async function handleCheckoutSubmit(e) {
         const result = await response.json();
 
         if (response.ok && result.success) {
+            saveCustomer({
+                name: name,
+                phone: phone,
+                region: region,
+                address: address,
+                fullAddress: `${region}, ${address}`
+            });
             // Clean cart if ordered from cart
             if (!selectedProductForInstantOrder) {
                 cart = [];
@@ -936,6 +959,65 @@ function showOrderSuccessReceipt(orderNo, trackingCode, orderPayload) {
     if (document.getElementById('rcptPayment')) document.getElementById('rcptPayment').textContent = orderPayload.paymentMethod;
 
     modal.classList.add('active');
+    refreshOrderTracking(trackingCode);
+}
+
+async function refreshOrderTracking(trackingCode) {
+    const statusEl = document.getElementById('orderTrackingStatus');
+    if (!statusEl || !trackingCode) return;
+    statusEl.textContent = 'Buyurtma holati yuklanmoqda...';
+    try {
+        const response = await fetch(
+            window.valmoraApiUrl(`/api/tracking?code=${encodeURIComponent(trackingCode)}`)
+        );
+        const result = await response.json();
+        if (!response.ok || !result.success) {
+            throw new Error(result.error || 'Buyurtma holatini yuklab bo\'lmadi.');
+        }
+        const labels = {
+            pending: 'Qabul qilindi',
+            processing: 'Tayyorlanmoqda',
+            shipping: 'Yetkazilmoqda',
+            completed: 'Yetkazib berildi',
+            cancelled: 'Bekor qilingan'
+        };
+        statusEl.textContent = labels[result.status] || 'Holati noma\'lum';
+    } catch (error) {
+        statusEl.textContent = 'Holatni hozir tekshirib bo\'lmadi. Keyinroq qayta urinib ko\'ring.';
+        console.error('VALMORA tracking API error:', error);
+    }
+}
+
+async function lookupOrderTracking(event) {
+    event.preventDefault();
+    const codeInput = document.getElementById('trackingLookupCode');
+    const resultEl = document.getElementById('trackingLookupResult');
+    const code = codeInput.value.trim();
+    if (!/^VAL-EXP-[A-F0-9]{6,32}$/i.test(code)) {
+        resultEl.textContent = 'Tracking kodi formatini tekshiring.';
+        return;
+    }
+
+    resultEl.textContent = 'Buyurtma holati yuklanmoqda...';
+    try {
+        const response = await fetch(
+            window.valmoraApiUrl(`/api/tracking?code=${encodeURIComponent(code)}`)
+        );
+        const result = await response.json();
+        if (!response.ok || !result.success) {
+            throw new Error(result.error || 'Buyurtma holatini topib bo\'lmadi.');
+        }
+        const labels = {
+            pending: 'Qabul qilindi',
+            processing: 'Tayyorlanmoqda',
+            shipping: 'Yetkazilmoqda',
+            completed: 'Yetkazib berildi',
+            cancelled: 'Bekor qilingan'
+        };
+        resultEl.textContent = `${result.order_no}: ${labels[result.status] || 'Holati noma\'lum'}`;
+    } catch (error) {
+        resultEl.textContent = error.message;
+    }
 }
 
 // ==========================================================================
@@ -993,7 +1075,8 @@ function showStoreToast(message, type = 'info') {
     const icon = isSuccess ? 'fa-circle-check' : isError ? 'fa-circle-exclamation' : 'fa-bell';
     const iconColor = isSuccess ? '#4ade80' : isError ? '#ef4444' : 'var(--gold)';
 
-    toast.innerHTML = `<i class="fa-solid ${icon}" style="color: ${iconColor}; font-size: 16px;"></i> <span>${message}</span>`;
+    toast.innerHTML = `<i class="fa-solid ${icon}" style="color: ${iconColor}; font-size: 16px;"></i> <span></span>`;
+    toast.querySelector('span').textContent = message;
     container.appendChild(toast);
 
     setTimeout(() => {
@@ -1133,6 +1216,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const coForm = document.getElementById('checkoutForm');
     if (coForm) coForm.addEventListener('submit', handleCheckoutSubmit);
+
+    const trackingForm = document.getElementById('trackingLookupForm');
+    if (trackingForm) trackingForm.addEventListener('submit', lookupOrderTracking);
 
     const searchInput = document.getElementById('storeSearchInput');
     if (searchInput) {

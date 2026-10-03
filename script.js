@@ -133,6 +133,11 @@ const valmoraApi = {
     baseUrl: window.VALMORA_API_BASE_URL || "",
     isOnline: false,
 
+    logout() {
+        sessionStorage.removeItem("valmora_admin_token");
+        window.location.replace("index.html");
+    },
+
     async request(path, options = {}) {
         const headers = new Headers(options.headers || {});
         let token = sessionStorage.getItem("valmora_admin_token");
@@ -258,7 +263,7 @@ const valmoraApi = {
 
     openStatusModal() {
         const modal = document.createElement("div");
-        modal.className = "modal-backdrop active";
+        modal.className = "modal-backdrop show";
         modal.id = "valmoraStatusModal";
         modal.innerHTML = `
             <div class="modal" style="max-width: 580px;">
@@ -305,7 +310,7 @@ const valmoraApi = {
         const tracking = order.tracking_code || `VAL-UZ-${Math.floor(100000 + Math.random()*900000)}`;
 
         const modal = document.createElement("div");
-        modal.className = "modal-backdrop active";
+        modal.className = "modal-backdrop show";
         modal.id = "valmoraCertModal";
         modal.innerHTML = `
             <div class="modal" style="max-width: 740px; padding: 0; background: transparent; border: none; box-shadow: none;">
@@ -326,15 +331,15 @@ const valmoraApi = {
                         <div class="valmora-cert-grid">
                             <div>
                                 <div style="font-size: 11px; color: rgba(255,255,255,0.5);">BUYURTMA RAQAMI:</div>
-                                <div style="font-weight: 600; color: #d4af37; font-size: 14px;">${orderNo}</div>
+                                <div style="font-weight: 600; color: #d4af37; font-size: 14px;">${escapeHtml(orderNo)}</div>
                                 <div style="font-size: 11px; color: rgba(255,255,255,0.5); margin-top: 8px;">KAFOLAT SERIYASI:</div>
-                                <div style="font-family: monospace; font-size: 13px;">${tracking}</div>
+                                <div style="font-family: monospace; font-size: 13px;">${escapeHtml(tracking)}</div>
                             </div>
                             <div style="text-align: right;">
                                 <div style="font-size: 11px; color: rgba(255,255,255,0.5);">RASMIY MIJOZ:</div>
-                                <div style="font-weight: 600; font-size: 14px;">${customer}</div>
+                                <div style="font-weight: 600; font-size: 14px;">${escapeHtml(customer)}</div>
                                 <div style="font-size: 11px; color: rgba(255,255,255,0.5); margin-top: 8px;">SANA:</div>
-                                <div style="font-size: 13px;">${date}</div>
+                                <div style="font-size: 13px;">${escapeHtml(date)}</div>
                             </div>
                         </div>
 
@@ -349,7 +354,7 @@ const valmoraApi = {
                             <tbody>
                                 <tr>
                                     <td>
-                                        <strong style="color: #ffffff;">${productTitle}</strong>
+                                        <strong style="color: #ffffff;">${escapeHtml(productTitle)}</strong>
                                         <div style="font-size: 11px; color: rgba(255,255,255,0.5);">Valmora eksklyuziv sifat tekshiruvidan o'tgan original buyum.</div>
                                     </td>
                                     <td style="text-align: center;">1 dona</td>
@@ -431,6 +436,17 @@ function saveStoredCart(cart) {
 // Currency Formatter
 function formatSum(num) {
     return Number(num).toLocaleString('uz-UZ') + " so'm";
+}
+
+function escapeHtml(value) {
+    return String(value ?? "").replace(/[&<>"']/g, character => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+    })[character]);
+}
+
+function isValidUzbekPhone(value) {
+    const digits = String(value || "").replace(/\D/g, "");
+    return digits.length === 9 || (digits.length === 12 && digits.startsWith("998"));
 }
 
 // ==========================================================================
@@ -562,7 +578,8 @@ function showToast(message, type = "success", icon = "fa-check") {
         document.body.appendChild(toast);
     }
     toast.className = `dropship-toast ${type} show`;
-    toast.innerHTML = `<i class="fa-solid ${icon}"></i> <span>${message}</span>`;
+    toast.innerHTML = `<i class="fa-solid ${icon}"></i> <span></span>`;
+    toast.querySelector("span").textContent = message;
     
     setTimeout(() => {
         toast.classList.remove("show");
@@ -665,7 +682,7 @@ function renderProductsGrid() {
         return `
             <div class="product-card" data-id="${prod.id}">
                 <div class="product-image-wrap">
-                    <img src="${prod.image}" alt="${prod.title}" class="product-img" loading="lazy">
+                    <img src="${escapeHtml(prod.image)}" alt="${escapeHtml(prod.title)}" class="product-img" loading="lazy">
                     
                     <div class="card-badges">
                         ${badgeHtml}
@@ -684,14 +701,14 @@ function renderProductsGrid() {
 
                 <div class="product-content">
                     <div class="card-category-row">
-                        <span class="prod-category">${prod.categoryName}</span>
+                        <span class="prod-category">${escapeHtml(prod.categoryName)}</span>
                         <div class="prod-rating">
                             <i class="fa-solid fa-star"></i>
                             <span>${prod.rating}</span>
                         </div>
                     </div>
 
-                    <h3 class="product-title">${prod.title}</h3>
+                    <h3 class="product-title">${escapeHtml(prod.title)}</h3>
 
                     <div class="price-container">
                         <span class="main-price">${formatSum(prod.price)}</span>
@@ -946,9 +963,14 @@ function addToCart(productId) {
 
     let cart = getStoredCart();
     const existing = cart.find(item => item.id === productId);
+    const nextQuantity = (Number(existing?.qty) || 0) + 1;
+    if (nextQuantity > 50 || nextQuantity > Number(product.stock ?? 0)) {
+        showToast("Omborda so'ralgan miqdorda mahsulot qolmagan.", "error", "fa-circle-exclamation");
+        return;
+    }
 
     if (existing) {
-        existing.qty += 1;
+        existing.qty = nextQuantity;
     } else {
         cart.push({
             id: product.id,
@@ -988,9 +1010,9 @@ function updateCartUI() {
         } else {
             itemsContainer.innerHTML = cart.map(item => `
                 <div class="cart-item">
-                    <img src="${item.image}" alt="${item.title}" class="cart-item-img">
+                    <img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.title)}" class="cart-item-img">
                     <div class="cart-item-info">
-                        <h5>${item.title}</h5>
+                        <h5>${escapeHtml(item.title)}</h5>
                         <span class="item-price">${formatSum(item.price)}</span>
                     </div>
                     <div class="cart-item-qty">
@@ -1017,6 +1039,13 @@ function changeCartQty(id, delta) {
     let cart = getStoredCart();
     const item = cart.find(i => i.id === id);
     if (!item) return;
+    if (delta > 0) {
+        const product = getStoredProducts().find(candidate => candidate.id === id);
+        if (!product || item.qty >= Number(product.stock ?? 0) || item.qty >= 50) {
+            showToast("Omborda boshqa mahsulot qolmagan.", "error", "fa-circle-exclamation");
+            return;
+        }
+    }
 
     item.qty += delta;
     if (item.qty <= 0) {
@@ -1060,53 +1089,95 @@ function initCartDrawer() {
 
     const checkoutBtn = document.getElementById("cartCheckoutBtn");
     if (checkoutBtn) {
-        checkoutBtn.addEventListener("click", async () => {
-            const cart = getStoredCart();
-            if (cart.length === 0) {
-                showToast("Avval tovar tanlang", "error");
-                return;
-            }
-            sound.playSuccess();
-            launchConfetti();
+        checkoutBtn.addEventListener("click", openAdminCartCheckout);
+    }
+}
 
-            const total = cart.reduce((acc, item) => acc + (item.price * item.qty), 0);
-            const orderPayload = {
-                customerName: "Valmora VIP Mijoz",
-                customerPhone: "+998 90 123 45 67",
-                shippingAddress: "Toshkent sh., Mirobod",
-                items: cart,
-                totalAmount: total,
-                paymentMethod: "Valmora Instant Express"
-            };
+function openAdminCartCheckout() {
+    if (!getStoredCart().length) {
+        showToast("Avval tovar tanlang", "error");
+        return;
+    }
 
-            // Save to Backend and Local DB
-            const res = await valmoraApi.createOrder(orderPayload);
-            const newOrder = {
-                id: res.order_no || `#VM-${Math.floor(8000 + Math.random() * 1000)}`,
-                customer: "Valmora VIP Mijoz",
-                city: "Toshkent",
-                product: cart.map(i => `${i.title} (x${i.qty})`).join(", "),
-                price: total,
-                date: "Hozirgina",
-                status: "completed",
-                tracking_code: res.tracking_code
-            };
-
-            const orders = getStoredOrders();
-            orders.unshift(newOrder);
-            saveStoredOrders(orders);
-
-            localStorage.setItem(STORAGE_KEYS.CART, JSON.stringify([]));
-            updateCartUI();
-            if (overlay) overlay.classList.remove("open");
-
-            showToast("Buyurtma rasmiylashtirildi & DB ga saqlandi", "success");
-            
-            // Auto open luxury certificate
-            setTimeout(() => {
-                valmoraApi.openCertificateModal(newOrder);
-            }, 600);
+    let modal = document.getElementById("adminCartCheckoutModal");
+    if (!modal) {
+        modal = document.createElement("div");
+        modal.id = "adminCartCheckoutModal";
+        modal.className = "modal-backdrop";
+        modal.innerHTML = `
+            <div class="modal-box" style="max-width: 520px;">
+                <div class="modal-head">
+                    <div><h3>Buyurtmani rasmiylashtirish</h3><p>Mijoz va yetkazib berish ma'lumotlarini kiriting.</p></div>
+                    <button type="button" class="btn-close-modal" id="closeAdminCartCheckout"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="modal-body">
+                    <form id="adminCartCheckoutForm">
+                        <div class="form-group"><label>Mijoz ismi *</label><input id="adminCheckoutName" required minlength="3" maxlength="120"></div>
+                        <div class="form-group"><label>Telefon *</label><input id="adminCheckoutPhone" type="tel" required placeholder="+998 90 123 45 67"></div>
+                        <div class="form-group"><label>Viloyat / shahar va to'liq manzil *</label><input id="adminCheckoutAddress" required minlength="4" maxlength="500" placeholder="Toshkent shahri, Chilonzor tumani, ..."></div>
+                        <p style="font-size:12px;color:var(--text-muted);margin-bottom:14px;">To'lov: eshik oldida (naqd yoki karta).</p>
+                        <button type="submit" id="adminCheckoutSubmit" class="btn-gradient" style="width:100%;justify-content:center;">Buyurtmani yuborish</button>
+                    </form>
+                </div>
+            </div>`;
+        document.body.appendChild(modal);
+        modal.querySelector("#closeAdminCartCheckout").addEventListener("click", () => modal.classList.remove("show"));
+        modal.addEventListener("click", event => {
+            if (event.target === modal) modal.classList.remove("show");
         });
+        modal.querySelector("#adminCartCheckoutForm").addEventListener("submit", submitAdminCartCheckout);
+    }
+    modal.classList.add("show");
+    modal.querySelector("#adminCheckoutName").focus();
+}
+
+async function submitAdminCartCheckout(event) {
+    event.preventDefault();
+    const name = document.getElementById("adminCheckoutName").value.trim();
+    const phone = document.getElementById("adminCheckoutPhone").value.trim();
+    const address = document.getElementById("adminCheckoutAddress").value.trim();
+    if (!isValidUzbekPhone(phone)) {
+        showToast("Telefon raqamini +998 bilan yoki 9 xonali mahalliy formatda kiriting.", "error");
+        return;
+    }
+
+    const cart = getStoredCart();
+    const button = document.getElementById("adminCheckoutSubmit");
+    button.disabled = true;
+    button.textContent = "Yuborilmoqda...";
+    try {
+        const result = await valmoraApi.createOrder({
+            customerName: name,
+            customerPhone: phone,
+            shippingAddress: address,
+            items: cart.map(item => ({ id: item.id, qty: Number(item.qty) })),
+            paymentMethod: "Eshik oldida (Naqd / Karta)"
+        });
+        const order = {
+            id: result.order_no,
+            order_no: result.order_no,
+            customer: name,
+            customer_name: name,
+            phone,
+            city: address.split(",")[0],
+            product: cart.map(item => `${item.title} (x${item.qty})`).join(", "),
+            price: result.total_amount,
+            total_amount: result.total_amount,
+            date: new Date().toISOString(),
+            created_at: new Date().toISOString(),
+            status: "pending",
+            tracking_code: result.tracking_code
+        };
+        saveStoredCart([]);
+        document.getElementById("adminCartCheckoutModal").classList.remove("show");
+        document.getElementById("cartOverlay")?.classList.remove("open");
+        showToast(`Buyurtma ${result.order_no} qabul qilindi. Tracking: ${result.tracking_code}`, "success");
+        setTimeout(() => valmoraApi.openCertificateModal(order), 300);
+    } catch (error) {
+        showToast(error.message || "Buyurtmani yuborib bo'lmadi.", "error", "fa-circle-exclamation");
+    } finally {
+        button.disabled = false;
+        button.textContent = "Buyurtmani yuborish";
     }
 }
 
@@ -1117,86 +1188,63 @@ function initQuickBuyForm() {
     const form = document.getElementById("quickBuyForm");
     if (!form) return;
 
-    form.addEventListener("submit", (e) => {
+    form.addEventListener("submit", async (e) => {
         e.preventDefault();
-        sound.playSuccess();
-        launchConfetti();
-
         const name = document.getElementById("qbCustomerName").value.trim();
         const phone = document.getElementById("qbCustomerPhone").value.trim();
         const city = document.getElementById("qbCustomerCity")?.value || "Toshkent";
-
-        const orderId = "#VM-" + Math.floor(1000 + Math.random() * 9000);
-        const newOrder = {
-            id: orderId,
-            customer: name,
-            phone: phone,
-            city: city,
-            product: activeQuickBuyProduct ? activeQuickBuyProduct.title : "Valmora Mahsuloti",
-            price: activeQuickBuyProduct ? activeQuickBuyProduct.price : 690000,
-            date: "Hozirgina",
-            status: "completed"
-        };
-
-        if (activeQuickBuyProduct) {
-            const products = getStoredProducts();
-            const prod = products.find(p => p.id === activeQuickBuyProduct.id);
-            if (prod) {
-                prod.sales = (prod.sales || 0) + 1;
-                prod.stock = Math.max(1, (prod.stock || 5) - 1);
-                saveStoredProducts(products);
-                renderProductsGrid();
-            }
+        const address = document.getElementById("qbCustomerAddress").value.trim();
+        const submitButton = form.querySelector('[type="submit"]');
+        if (!isValidUzbekPhone(phone)) {
+            showToast("Telefon raqamini +998 bilan yoki 9 xonali mahalliy formatda kiriting.", "error");
+            return;
+        }
+        if (!activeQuickBuyProduct) {
+            showToast("Buyurtma uchun mahsulotni tanlang.", "error");
+            return;
         }
 
-        const orders = getStoredOrders();
-        orders.unshift(newOrder);
-        saveStoredOrders(orders);
-
-        closeQuickBuy();
-        showToast(`Rahmat, ${name}! Buyurtmangiz qabul qilindi (${orderId})`, "success");
+        submitButton.disabled = true;
+        submitButton.textContent = "Buyurtma yuborilmoqda...";
+        try {
+            const result = await valmoraApi.createOrder({
+                customerName: name,
+                customerPhone: phone,
+                shippingAddress: `${city}, ${address}`,
+                items: [{ id: activeQuickBuyProduct.id, qty: 1 }],
+                paymentMethod: "Eshik oldida (Naqd / Karta)"
+            });
+            const newOrder = {
+                id: result.order_no,
+                order_no: result.order_no,
+                customer: name,
+                customer_name: name,
+                phone,
+                city,
+                product: activeQuickBuyProduct.title,
+                price: result.total_amount,
+                total_amount: result.total_amount,
+                date: new Date().toISOString(),
+                created_at: new Date().toISOString(),
+                status: "pending",
+                tracking_code: result.tracking_code
+            };
+            closeQuickBuy();
+            sound.playSuccess();
+            launchConfetti();
+            showToast(`Rahmat, ${name}! Buyurtma ${result.order_no} qabul qilindi.`, "success");
+            setTimeout(() => valmoraApi.openCertificateModal(newOrder), 300);
+            valmoraApi.fetchProducts().then(products => {
+                saveStoredProducts(products);
+                renderProductsGrid();
+            }).catch(error => console.error("Product refresh after order failed:", error));
+        } catch (error) {
+            showToast(error.message || "Buyurtmani yuborib bo'lmadi.", "error", "fa-circle-exclamation");
+        } finally {
+            submitButton.disabled = false;
+            submitButton.innerHTML = "Buyurtmani rasmiylashtirish";
+        }
     });
-}
-
-// ==========================================================================
-// SUBTLE LUXURY SALES POPUP
-// ==========================================================================
-const BUYER_NAMES = [
-    { name: "Sardor Akbarov", city: "Toshkent" },
-    { name: "Jasur Bekmirzayev", city: "Samarqand" },
-    { name: "Malika Aliyeva", city: "Farg'ona" },
-    { name: "Bobur Mirzayev", city: "Buxoro" },
-    { name: "Shahnoza Yusupova", city: "Andijon" }
-];
-
-function triggerLiveSalesPopup() {
-    let toast = document.querySelector(".live-sales-toast");
-    if (!toast) {
-        toast = document.createElement("div");
-        toast.className = "live-sales-toast";
-        document.body.appendChild(toast);
-    }
-
-    const products = getStoredProducts();
-    if (!products.length) return;
-
-    const randomProduct = products[Math.floor(Math.random() * products.length)];
-    const randomBuyer = BUYER_NAMES[Math.floor(Math.random() * BUYER_NAMES.length)];
-    const minutesAgo = Math.floor(Math.random() * 8) + 1;
-
-    toast.innerHTML = `
-        <img src="${randomProduct.image}" alt="${randomProduct.title}" class="toast-img">
-        <div class="toast-body">
-            <strong>${randomBuyer.name} (${randomBuyer.city})</strong>
-            <p>${randomProduct.title.substring(0, 26)}...</p>
-            <span class="toast-time">${minutesAgo} daqiqa oldin • Tasdiqlangan buyurtma</span>
-        </div>
-    `;
-
-    toast.classList.add("show");
-    setTimeout(() => {
-        toast.classList.remove("show");
-    }, 5000);
 }
 
 // ==========================================================================
@@ -1206,6 +1254,7 @@ async function initDashboardPage() {
     const revenueEl = document.getElementById("dashTotalRevenue");
     const ordersEl = document.getElementById("dashTotalOrders");
     const profitEl = document.getElementById("dashTotalProfit");
+    const customersEl = document.getElementById("dashTotalCustomers");
     const tbody = document.getElementById("recentOrdersTbody");
     if (!tbody) return;
 
@@ -1220,29 +1269,47 @@ async function initDashboardPage() {
         if (revenueEl) revenueEl.textContent = formatSum(metrics.total_revenue);
         if (ordersEl) ordersEl.textContent = metrics.total_orders;
         if (profitEl) profitEl.textContent = formatSum(metrics.net_profit);
+        if (customersEl) customersEl.textContent = metrics.total_customers;
+        const orderBadge = document.getElementById("sidebarOrderBadge");
+        if (orderBadge) orderBadge.textContent = metrics.total_orders;
+        const periodEl = document.getElementById("dashboardSalesPeriod");
+        if (periodEl) periodEl.textContent = `${new Date().getFullYear()} · bazadagi buyurtmalar`;
+        const barsEl = document.getElementById("dashMonthlySalesBars");
+        if (barsEl) {
+            const monthNames = ["Yan", "Fev", "Mar", "Apr", "May", "Iyun", "Iyul", "Avg", "Sen", "Okt", "Noy", "Dek"];
+            const monthlyRevenue = Array.isArray(result.monthly_revenue) ? result.monthly_revenue : [];
+            const maxRevenue = Math.max(...monthlyRevenue.map(value => Number(value) || 0), 0);
+            barsEl.innerHTML = monthNames.map((month, index) => {
+                const revenue = Number(monthlyRevenue[index]) || 0;
+                const height = maxRevenue ? Math.max(2, revenue / maxRevenue * 100) : 0;
+                return `<div class="bar" style="height:${height}%" data-value="${escapeHtml(formatSum(revenue))}" title="${escapeHtml(`${month}: ${formatSum(revenue)}`)}"></div>`;
+            }).join("");
+            const monthsEl = document.querySelector(".chart .months");
+            if (monthsEl) monthsEl.innerHTML = monthNames.map(month => `<span>${month}</span>`).join("");
+        }
         const orders = result.recent_orders || [];
         tbody.innerHTML = orders.length ? orders.map(o => `
             <tr>
-                <td class="order-id">${o.order_no}</td>
+                <td class="order-id">${escapeHtml(o.order_no)}</td>
                 <td>
                     <div class="customer">
-                        <div class="customer-avatar">${o.customer_name ? o.customer_name[0].toUpperCase() : 'M'}</div>
-                        <span>${o.customer_name || "Mijoz"}</span>
+                        <div class="customer-avatar">${escapeHtml(o.customer_name ? o.customer_name[0].toUpperCase() : 'M')}</div>
+                        <span>${escapeHtml(o.customer_name || "Mijoz")}</span>
                     </div>
                 </td>
-                <td>${(o.items || []).map(item => `${item.title} (x${item.qty})`).join(", ")}</td>
-                <td>${o.created_at || ""}</td>
+                <td>${(o.items || []).map(item => `${escapeHtml(item.title)} (x${Number(item.qty) || 0})`).join(", ")}</td>
+                <td>${escapeHtml(o.created_at || "")}</td>
                 <td><strong>${formatSum(o.total_amount)}</strong></td>
                 <td>
-                    <span class="status-badge ${o.status}">
-                        ${o.status === 'completed' ? 'Yakunlangan' : o.status === 'shipping' ? 'Yetkazilmoqda' : 'Kutilmoqda'}
+                    <span class="status-badge ${escapeHtml(o.status)}">
+                        ${o.status === 'completed' ? 'Yakunlangan' : o.status === 'shipping' ? 'Yetkazilmoqda' : o.status === 'cancelled' ? 'Bekor qilingan' : 'Kutilmoqda'}
                     </span>
                 </td>
             </tr>
         `).join("") : '<tr><td colspan="6" style="text-align:center;padding:24px;">Hozircha buyurtmalar yo‘q.</td></tr>';
     } catch (error) {
         console.error("Dashboard API error:", error);
-        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:24px;color:#ff6b6b;">${error.message}</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:24px;color:#ff6b6b;">${escapeHtml(error.message)}</td></tr>`;
     }
 }
 
@@ -1303,6 +1370,20 @@ function injectCloudPill() {
     }
 }
 
+function injectAdminLogoutButton() {
+    if (!document.querySelector(".app, .dashboard")) return;
+    const header = document.querySelector(".header-right, .header-actions");
+    if (!header || document.getElementById("adminLogoutButton")) return;
+    const button = document.createElement("button");
+    button.id = "adminLogoutButton";
+    button.className = "btn-glass";
+    button.type = "button";
+    button.textContent = "Chiqish";
+    button.title = "Admin sessiyasidan chiqish";
+    button.addEventListener("click", () => valmoraApi.logout());
+    header.appendChild(button);
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
     initTheme();
     initMobileMenu();
@@ -1312,6 +1393,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     initFilters();
     updateCartUI();
     injectCloudPill();
+    injectAdminLogoutButton();
 
     valmoraApi.checkHealth();
 
@@ -1326,6 +1408,4 @@ document.addEventListener("DOMContentLoaded", async () => {
         initDashboardPage();
     }
 
-    setInterval(triggerLiveSalesPopup, 25000);
-    setTimeout(triggerLiveSalesPopup, 4000);
 });

@@ -39,7 +39,7 @@ const VALMORA_I18N = {
         feat_pack_title: "Lyuks Sovg'a Qadoqi",
         feat_pack_desc: "Maxsus yog'och va baxmal qutida topshiriladi",
         feat_pay_title: "Xavfsiz To'lov",
-        feat_pay_desc: "Naqd, Uzcard, Humo yoki Click/Payme",
+        feat_pay_desc: "Eshik oldida naqd yoki karta bilan to'lash",
         
         // Categories & Sorting
         cat_all: "Barcha Kolleksiya",
@@ -159,7 +159,7 @@ const VALMORA_I18N = {
         feat_pack_title: "Люкс Упаковка",
         feat_pack_desc: "Поставляется в фирменной деревянной и бархатной шкатулке",
         feat_pay_title: "Безопасная Оплата",
-        feat_pay_desc: "Наличными, картами Uzcard, Humo или Click/Payme",
+        feat_pay_desc: "Наличными или картой при получении",
         
         // Categories & Sorting
         cat_all: "Вся коллекция",
@@ -279,7 +279,7 @@ const VALMORA_I18N = {
         feat_pack_title: "Luxury Gift Packaging",
         feat_pack_desc: "Delivered in handcrafted wooden & velvet display cases",
         feat_pay_title: "Secure Payment",
-        feat_pay_desc: "Cash on delivery, Uzcard, Humo, or Click/Payme",
+        feat_pay_desc: "Cash or card on delivery",
         
         // Categories & Sorting
         cat_all: "All Collection",

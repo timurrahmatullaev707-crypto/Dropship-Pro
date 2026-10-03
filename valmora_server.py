@@ -26,6 +26,8 @@ import threading
 import uuid
 import hmac
 import math
+import html
+import re
 
 # Configuration
 PORT = int(os.environ.get("PORT", 8080))
@@ -364,6 +366,32 @@ class ValmoraHandler(SimpleHTTPRequestHandler):
                 "timestamp": datetime.now().isoformat()
             })
 
+        elif path == '/api/tracking':
+            tracking_code = query.get('code', [''])[0].strip().upper()
+            if not re.fullmatch(r'VAL-EXP-[A-F0-9]{6,32}', tracking_code):
+                return self.send_json_response(
+                    {"success": False, "error": "Tracking kodi noto'g'ri."}, 400
+                )
+            conn = get_db()
+            cursor = conn.cursor()
+            cursor.execute(
+                'SELECT order_no, status, created_at FROM orders WHERE tracking_code = ?',
+                (tracking_code,)
+            )
+            order = cursor.fetchone()
+            conn.close()
+            if not order:
+                return self.send_json_response(
+                    {"success": False, "error": "Buyurtma topilmadi."}, 404
+                )
+            status = 'shipping' if order['status'] == 'processing' else order['status']
+            return self.send_json_response({
+                "success": True,
+                "order_no": order['order_no'],
+                "status": status,
+                "created_at": order['created_at']
+            })
+
         # 2. Executive Dashboard Overview Metrics
         elif path == '/api/overview':
             conn = get_db()
@@ -372,7 +400,13 @@ class ValmoraHandler(SimpleHTTPRequestHandler):
             cursor.execute('SELECT COUNT(*) as cnt FROM products')
             total_products = cursor.fetchone()['cnt']
             
-            cursor.execute('SELECT COUNT(*) as cnt, COALESCE(SUM(total_amount), 0) as total_rev, COALESCE(SUM(net_profit), 0) as total_profit FROM orders')
+            cursor.execute('''
+                SELECT COUNT(*) as cnt,
+                       SUM(CASE WHEN status != 'cancelled' THEN total_amount ELSE 0 END) as total_rev,
+                       SUM(CASE WHEN status != 'cancelled' THEN net_profit ELSE 0 END) as total_profit,
+                       SUM(CASE WHEN status != 'cancelled' THEN 1 ELSE 0 END) as active_count
+                FROM orders
+            ''')
             order_stats = cursor.fetchone()
             
             cursor.execute('SELECT COUNT(*) as cnt FROM customers')
@@ -380,6 +414,19 @@ class ValmoraHandler(SimpleHTTPRequestHandler):
 
             cursor.execute('SELECT * FROM orders ORDER BY created_at DESC LIMIT 5')
             recent_orders = [dict(row) for row in cursor.fetchall()]
+            current_year = str(datetime.now().year)
+            cursor.execute(
+                "SELECT strftime('%m', created_at) AS month, "
+                "COALESCE(SUM(total_amount), 0) AS revenue FROM orders "
+                "WHERE status != 'cancelled' AND strftime('%Y', created_at) = ? "
+                "GROUP BY month",
+                (current_year,)
+            )
+            monthly_revenue = [0] * 12
+            for row in cursor.fetchall():
+                month_index = int(row['month']) - 1
+                if 0 <= month_index < 12:
+                    monthly_revenue[month_index] = row['revenue']
             for r in recent_orders:
                 try:
                     r['items'] = json.loads(r['items_json'])
@@ -402,10 +449,11 @@ class ValmoraHandler(SimpleHTTPRequestHandler):
                     "total_orders": order_stats['cnt'],
                     "total_products": total_products,
                     "total_customers": total_customers,
-                    "average_order_value": round(rev / order_stats['cnt']) if order_stats['cnt'] else 0,
+                    "average_order_value": round(rev / order_stats['active_count']) if order_stats['active_count'] else 0,
                     "live_visitors": 0
                 },
                 "recent_orders": recent_orders,
+                "monthly_revenue": monthly_revenue,
                 "timestamp": datetime.now().isoformat()
             })
 
@@ -508,9 +556,16 @@ class ValmoraHandler(SimpleHTTPRequestHandler):
             transactions = [dict(row) for row in cursor.fetchall()]
             cursor.execute("SELECT COALESCE(SUM(total_amount), 0) FROM orders WHERE status = 'completed'")
             total_balance = cursor.fetchone()[0]
-            cursor.execute('SELECT COALESCE(SUM(total_amount - net_profit), 0) FROM orders')
+            cursor.execute(
+                "SELECT COALESCE(SUM(total_amount - net_profit), 0) "
+                "FROM orders WHERE status != 'cancelled'"
+            )
             cogs_paid = cursor.fetchone()[0]
-            cursor.execute('SELECT COALESCE(SUM(total_amount), 0), COALESCE(SUM(net_profit), 0), COUNT(*) FROM orders')
+            cursor.execute(
+                "SELECT COALESCE(SUM(total_amount), 0), "
+                "COALESCE(SUM(net_profit), 0), COUNT(*) "
+                "FROM orders WHERE status != 'cancelled'"
+            )
             totals = cursor.fetchone()
             conn.close()
 
@@ -555,6 +610,7 @@ class ValmoraHandler(SimpleHTTPRequestHandler):
                     {"method": "POST", "url": "/api/products", "desc": "Create a new luxury dropshipping product in DB"},
                     {"method": "GET", "url": "/api/orders", "desc": "Orders with tracking details (admin key required)"},
                     {"method": "POST", "url": "/api/orders", "desc": "Create an order using server-side prices and inventory"},
+                    {"method": "GET", "url": "/api/tracking?code=VAL-EXP-...", "desc": "Public order status lookup by tracking code"},
                     {"method": "PATCH", "url": "/api/orders/update-status", "desc": "Change order status"},
                     {"method": "GET", "url": "/api/customers", "desc": "Customer records (admin key required)"},
                     {"method": "GET", "url": "/api/finances", "desc": "Recorded transactions (admin key required)"},
@@ -655,6 +711,7 @@ class ValmoraHandler(SimpleHTTPRequestHandler):
             customer_phone = str(payload.get('customerPhone', '')).strip()
             customer_email = str(payload.get('customerEmail', '')).strip()
             shipping_address = str(payload.get('shippingAddress', '')).strip()
+            phone_digits = re.sub(r'\D', '', customer_phone)
             requested_items = payload.get('items')
             payment_method = str(payload.get('paymentMethod', 'Eshik oldida (Naqd / Karta)')).strip()
             try:
@@ -662,8 +719,19 @@ class ValmoraHandler(SimpleHTTPRequestHandler):
             except (TypeError, ValueError):
                 return self.send_json_response({"success": False, "error": "Chegirma qiymati noto'g'ri."}, 400)
             promo_code = str(payload.get('promoCode', '')).strip().upper()
-            if (len(customer_name) < 3 or len(customer_phone) < 9 or
-                    len(shipping_address) < 4 or not math.isfinite(discount_percent) or
+            valid_phone = (
+                len(phone_digits) == 9 or
+                (len(phone_digits) == 12 and phone_digits.startswith('998'))
+            )
+            valid_email = (
+                not customer_email or
+                bool(re.fullmatch(r'[^@\s]+@[^@\s]+\.[^@\s]+', customer_email))
+            )
+            if (len(customer_name) < 3 or len(customer_name) > 120 or
+                    not valid_phone or len(customer_phone) > 32 or
+                    len(shipping_address) < 4 or len(shipping_address) > 500 or
+                    not valid_email or len(customer_email) > 254 or
+                    not math.isfinite(discount_percent) or
                     discount_percent not in (0, 10) or
                     (discount_percent == 10 and promo_code not in {'VALMORA', 'VALMORA2026', 'VIP'})):
                 return self.send_json_response({"success": False, "error": "Buyurtma ma'lumotlarini tekshiring."}, 400)
@@ -685,12 +753,14 @@ class ValmoraHandler(SimpleHTTPRequestHandler):
                     conn.close()
                     return self.send_json_response({"success": False, "error": "Buyurtma mahsuloti noto'g'ri."}, 400)
                 product_id = str(requested_item.get('id', '')).strip()
+                raw_quantity = requested_item.get('qty', 0)
                 try:
-                    quantity = int(requested_item.get('qty', 0))
-                except (TypeError, ValueError):
+                    quantity = int(raw_quantity)
+                except (TypeError, ValueError, OverflowError):
                     conn.close()
                     return self.send_json_response({"success": False, "error": "Mahsulot miqdori noto'g'ri."}, 400)
-                if not product_id or quantity < 1 or quantity > 50:
+                if (isinstance(raw_quantity, bool) or quantity != raw_quantity or
+                        not product_id or quantity < 1 or quantity > 50):
                     conn.close()
                     return self.send_json_response({"success": False, "error": "Mahsulot miqdorini tekshiring."}, 400)
                 requested_quantities[product_id] = requested_quantities.get(product_id, 0) + quantity
@@ -726,7 +796,7 @@ class ValmoraHandler(SimpleHTTPRequestHandler):
             net_profit = round(total_amount - total_cost, 2)
             order_id = f"ord-{uuid.uuid4().hex[:8]}"
             order_no = f"VAL-{datetime.now().strftime('%y%m%d')}-{uuid.uuid4().hex[:4].upper()}"
-            tracking_code = f"VAL-EXP-{uuid.uuid4().hex[:6].upper()}"
+            tracking_code = f"VAL-EXP-{uuid.uuid4().hex[:16].upper()}"
 
             for quantity, product_id in stock_updates:
                 cursor.execute('UPDATE products SET stock = stock - ? WHERE id = ?', (quantity, product_id))
@@ -778,13 +848,18 @@ class ValmoraHandler(SimpleHTTPRequestHandler):
         elif path == '/api/orders/update-status':
             order_id = payload.get('order_id')
             new_status = payload.get('status')
-            if not order_id or new_status not in {'pending', 'processing', 'shipping', 'completed', 'cancelled'}:
+            if (not isinstance(order_id, str) or not order_id.strip() or
+                    not isinstance(new_status, str) or
+                    new_status not in {'pending', 'processing', 'shipping', 'completed', 'cancelled'}):
                 return self.send_json_response({"success": False, "error": "Buyurtma yoki holat noto'g'ri."}, 400)
 
             conn = get_db()
             cursor = conn.cursor()
             conn.execute('BEGIN IMMEDIATE')
-            cursor.execute('SELECT id, status, items_json FROM orders WHERE id = ? OR order_no = ?', (order_id, order_id))
+            cursor.execute(
+                'SELECT id, order_no, status, items_json FROM orders WHERE id = ? OR order_no = ?',
+                (order_id, order_id)
+            )
             order = cursor.fetchone()
             if not order:
                 conn.close()
@@ -812,6 +887,15 @@ class ValmoraHandler(SimpleHTTPRequestHandler):
                         (quantity, quantity, item.get('id'))
                     )
             cursor.execute('UPDATE orders SET status = ? WHERE id = ?', (new_status, order['id']))
+            transaction_status = (
+                'Bekor qilingan' if new_status == 'cancelled' else
+                'Tasdiqlangan' if new_status == 'completed' else
+                'Kutilmoqda'
+            )
+            cursor.execute(
+                'UPDATE transactions SET status = ? WHERE description = ?',
+                (transaction_status, f"Yangi buyurtma tushumi ({order['order_no']})")
+            )
             conn.commit()
             conn.close()
 
@@ -822,9 +906,22 @@ class ValmoraHandler(SimpleHTTPRequestHandler):
 
         # 4. AI Pricing Optimizer Engine
         elif path == '/api/ai/pricing-optimizer':
-            cost = float(payload.get('cost', 0))
+            try:
+                cost = float(payload.get('cost', 0))
+                luxury_multiplier = float(payload.get('luxury_factor', 2.1))
+            except (TypeError, ValueError):
+                return self.send_json_response(
+                    {"success": False, "error": "Tannarx va narx koeffitsiyenti raqam bo'lishi kerak."},
+                    400
+                )
+            if (not math.isfinite(cost) or cost <= 0 or
+                    not math.isfinite(luxury_multiplier) or luxury_multiplier <= 0 or
+                    luxury_multiplier > 10):
+                return self.send_json_response(
+                    {"success": False, "error": "Tannarx yoki narx koeffitsiyentini tekshiring."},
+                    400
+                )
             category = payload.get('category', 'accessories')
-            luxury_multiplier = float(payload.get('luxury_factor', 2.1))
 
             # Valmora Quantum Formula
             recommended_price = round((cost * luxury_multiplier) / 10000) * 10000
@@ -877,8 +974,8 @@ class ValmoraHandler(SimpleHTTPRequestHandler):
 
         # 7. Test Telegram Bot Connection
         elif path == '/api/telegram/test':
-            token = payload.get('token', '').strip()
-            chat_id = payload.get('chat_id', '').strip()
+            token = str(payload.get('token', '')).strip()
+            chat_id = str(payload.get('chat_id', '')).strip()
             if not token or not chat_id:
                 return self.send_json_response({"success": False, "error": "Token va Chat ID talab etiladi"}, 400)
 
@@ -955,16 +1052,19 @@ def send_telegram_notification(order_no, customer_name, phone, shipping_address,
             title = itm.get('title', 'Mahsulot')
             qty = itm.get('qty', 1)
             price = float(itm.get('price', 0))
-            items_text += f"\n  {idx}. <b>{title}</b> — {qty} dona ({int(price * qty):,} so'm)"
+            items_text += (
+                f"\n  {idx}. <b>{html.escape(str(title))}</b> — "
+                f"{qty} dona ({int(price * qty):,} so'm)"
+            )
 
         message_text = (
             f"💎 <b>YANGI VALMORA BUYURTMA</b> 💎\n"
             f"━━━━━━━━━━━━━━━━━━━━━━\n"
             f"📦 <b>Buyurtma ID:</b> #{order_no}\n"
-            f"👤 <b>Mijoz:</b> {customer_name}\n"
-            f"📞 <b>Telefon:</b> <code>{phone}</code>\n"
-            f"📍 <b>Yetkazish manzili:</b> {shipping_address}\n"
-            f"💳 <b>To'lov usuli:</b> {payment_method}\n"
+            f"👤 <b>Mijoz:</b> {html.escape(customer_name)}\n"
+            f"📞 <b>Telefon:</b> <code>{html.escape(phone)}</code>\n"
+            f"📍 <b>Yetkazish manzili:</b> {html.escape(shipping_address)}\n"
+            f"💳 <b>To'lov usuli:</b> {html.escape(payment_method)}\n"
             f"🚚 <b>Dastavka:</b> VIP Tezkor Yetkazib Berish\n"
             f"━━━━━━━━━━━━━━━━━━━━━━\n"
             f"🛍 <b>Mahsulotlar:</b>{items_text}\n"

@@ -55,7 +55,7 @@
                 <a href="orders.html" class="nav-item">
                     <i class="fa-solid fa-bag-shopping"></i>
                     <span>Buyurtmalar</span>
-                    <span class="badge">12</span>
+                    <span class="badge" id="sidebarOrderBadge">0</span>
                 </a>
 
                 <a href="customers.html" class="nav-item">
@@ -177,11 +177,9 @@
                             <span>Jami Savdo</span>
                             <div class="stat-icon"><i class="fa-solid fa-wallet"></i></div>
                         </div>
-                        <h2 id="dashTotalRevenue">52,400,000 so'm</h2>
-                        <div class="growth positive">
-                            <i class="fa-solid fa-arrow-trend-up"></i>
-                            +14.2%
-                            <span>o'tgan haftaga nisbatan</span>
+                        <h2 id="dashTotalRevenue">—</h2>
+                        <div class="growth">
+                            <span>bekor qilinmagan buyurtmalar</span>
                         </div>
                     </div>
 
@@ -190,11 +188,9 @@
                             <span>Buyurtmalar</span>
                             <div class="stat-icon"><i class="fa-solid fa-bag-shopping"></i></div>
                         </div>
-                        <h2 id="dashTotalOrders">425</h2>
-                        <div class="growth positive">
-                            <i class="fa-solid fa-arrow-trend-up"></i>
-                            +8.5%
-                            <span>yangi xaridlar</span>
+                        <h2 id="dashTotalOrders">—</h2>
+                        <div class="growth">
+                            <span>barcha holatlardagi buyurtmalar</span>
                         </div>
                     </div>
 
@@ -203,11 +199,9 @@
                             <span>Mijozlar Bazasi</span>
                             <div class="stat-icon"><i class="fa-solid fa-users"></i></div>
                         </div>
-                        <h2>1,840</h2>
-                        <div class="growth positive">
-                            <i class="fa-solid fa-arrow-trend-up"></i>
-                            +18.7%
-                            <span>premium xaridorlar</span>
+                        <h2 id="dashTotalCustomers">—</h2>
+                        <div class="growth">
+                            <span>bazadagi mijozlar</span>
                         </div>
                     </div>
 
@@ -216,11 +210,9 @@
                             <span>Sof Marja (Foyda)</span>
                             <div class="stat-icon"><i class="fa-solid fa-gem"></i></div>
                         </div>
-                        <h2 id="dashTotalProfit" style="color: var(--gold);">27,200,000 so'm</h2>
-                        <div class="growth positive">
-                            <i class="fa-solid fa-arrow-trend-up"></i>
-                            +22.1%
-                            <span>marja ko'rsatkichi</span>
+                        <h2 id="dashTotalProfit" style="color: var(--gold);">—</h2>
+                        <div class="growth">
+                            <span>bekor qilinmagan buyurtmalar</span>
                         </div>
                     </div>
 
@@ -237,10 +229,7 @@
                                 <p>Oylar bo'yicha tushum va o'sish tendensiyasi</p>
                             </div>
 
-                            <select id="period" class="filter-select">
-                                <option>2026-yil</option>
-                                <option>O'tgan davr</option>
-                            </select>
+                            <span id="dashboardSalesPeriod">Joriy yil</span>
                         </div>
 
                         <div class="chart">
@@ -260,20 +249,7 @@
                                 <div class="grid-line line-4"></div>
                                 <div class="grid-line line-5"></div>
 
-                                <div class="bars">
-                                    <div class="bar" style="height:45%" data-value="45 mln"></div>
-                                    <div class="bar" style="height:52%" data-value="52 mln"></div>
-                                    <div class="bar" style="height:48%" data-value="48 mln"></div>
-                                    <div class="bar" style="height:65%" data-value="65 mln"></div>
-                                    <div class="bar" style="height:60%" data-value="60 mln"></div>
-                                    <div class="bar" style="height:74%" data-value="74 mln"></div>
-                                    <div class="bar" style="height:70%" data-value="70 mln"></div>
-                                    <div class="bar" style="height:84%" data-value="84 mln"></div>
-                                    <div class="bar" style="height:78%" data-value="78 mln"></div>
-                                    <div class="bar" style="height:90%" data-value="90 mln"></div>
-                                    <div class="bar" style="height:86%" data-value="86 mln"></div>
-                                    <div class="bar" style="height:95%" data-value="95 mln"></div>
-                                </div>
+                                <div class="bars" id="dashMonthlySalesBars"></div>
 
                                 <div class="months">
                                     <span>Yan</span>

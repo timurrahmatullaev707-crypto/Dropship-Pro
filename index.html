@@ -154,7 +154,7 @@
                 </div>
                 <div class="feature-info">
                     <h4 data-i18n="feat_pay_title">Xavfsiz To'lov</h4>
-                    <p data-i18n="feat_pay_desc">Naqd, Uzcard, Humo yoki Click/Payme</p>
+                    <p data-i18n="feat_pay_desc">Eshik oldida naqd yoki karta bilan to'lash</p>
                 </div>
             </div>
         </section>
@@ -199,6 +199,18 @@
             </div>
 
         </main>
+
+        <section class="store-main-container" aria-labelledby="trackingLookupTitle">
+            <div class="panel" style="max-width: 720px; margin: 0 auto 36px; padding: 24px;">
+                <h2 id="trackingLookupTitle" style="font-family: var(--font-serif); margin-bottom: 8px;">Buyurtmani kuzatish</h2>
+                <p style="color: var(--text-muted); margin-bottom: 14px;">Buyurtma tasdiqida berilgan tracking kodini kiriting.</p>
+                <form id="trackingLookupForm" style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <input id="trackingLookupCode" type="text" required maxlength="40" pattern="VAL-EXP-[A-Fa-f0-9]{6,32}" placeholder="VAL-EXP-..." aria-label="Tracking kodi" style="flex: 1 1 240px; min-height: 42px; padding: 10px 12px; border: 1px solid var(--border-color); border-radius: 8px; background: var(--bg-subtle); color: var(--text-main);">
+                    <button class="btn-gradient" type="submit">Holatni tekshirish</button>
+                </form>
+                <p id="trackingLookupResult" role="status" aria-live="polite" style="margin-top: 12px;"></p>
+            </div>
+        </section>
 
         <!-- ================= STORE FOOTER ================= -->
         <footer class="store-footer">
@@ -447,6 +459,12 @@
                     <div class="step-icon"><i class="fa-solid fa-house"></i></div>
                     <span class="step-label">Yetkazildi</span>
                 </div>
+            </div>
+            <div style="margin: 0 0 16px; padding: 10px 14px; border: 1px solid var(--border-color); border-radius: 8px; text-align: left;">
+                <strong>Buyurtma holati: </strong><span id="orderTrackingStatus">Tekshirilmoqda...</span>
+                <button type="button" class="btn-glass" style="margin-left: 8px; padding: 5px 10px;" onclick="refreshOrderTracking(document.getElementById('rcptTrackingCode').textContent)">
+                    Holatni yangilash
+                </button>
             </div>
 
             <!-- Receipt Details Box -->
