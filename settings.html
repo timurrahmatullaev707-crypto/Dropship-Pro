@@ -73,7 +73,7 @@
                         <div class="form-grid-2">
                             <div class="form-group">
                                 <label>Brend Nomi</label>
-                                <input type="text" id="cfgStoreName" name="store_name" value="VALMORA LUXE">
+                                <input type="text" id="cfgStoreName" name="store_name" value="VALMORA" readonly>
                             </div>
                             <div class="form-group">
                                 <label>Asosiy Valyuta</label>
@@ -143,22 +143,25 @@
     </div>
 
     <script src="translations.js"></script>
+    <script src="api-config.js"></script>
     <script src="script.js"></script>
     <script>
         // Load real settings from backend on page load
         async function loadServerSettings() {
             try {
-                const res = await fetch('/api/settings');
+                const res = await valmoraApi.request('/api/settings');
                 const data = await res.json();
                 if (data.success && data.settings) {
-                    if (data.settings.store_name) document.getElementById('cfgStoreName').value = data.settings.store_name;
+                    document.getElementById('cfgStoreName').value = 'VALMORA';
                     if (data.settings.currency_symbol) document.getElementById('cfgCurrency').value = data.settings.currency_symbol;
                     if (data.settings.support_phone) document.getElementById('cfgSupportPhone').value = data.settings.support_phone;
-                    if (data.settings.telegram_bot_token) document.getElementById('cfgTelegramToken').value = data.settings.telegram_bot_token;
                     if (data.settings.telegram_chat_id) document.getElementById('cfgTelegramChatId').value = data.settings.telegram_chat_id;
+                    if (data.telegram_bot_configured) {
+                        document.getElementById('cfgTelegramToken').placeholder = "Token saqlangan — almashtirish uchun yangisini kiriting";
+                    }
                 }
             } catch (err) {
-                console.log('Using local defaults:', err);
+                showToast(err.message || "Server sozlamalarini yuklab bo'lmadi.", 'error');
             }
         }
 
@@ -166,7 +169,6 @@
         document.getElementById('settingsForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const payload = {
-                store_name: document.getElementById('cfgStoreName').value,
                 currency_symbol: document.getElementById('cfgCurrency').value,
                 support_phone: document.getElementById('cfgSupportPhone').value,
                 telegram_bot_token: document.getElementById('cfgTelegramToken').value.trim(),
@@ -174,7 +176,7 @@
             };
 
             try {
-                const res = await fetch('/api/settings', {
+                const res = await valmoraApi.request('/api/settings', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify(payload)
@@ -207,7 +209,7 @@
             btn.disabled = true;
 
             try {
-                const res = await fetch('/api/telegram/test', {
+                const res = await valmoraApi.request('/api/telegram/test', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({ token: token, chat_id: chatId })

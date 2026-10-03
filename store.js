@@ -1,5 +1,5 @@
 // ==========================================================================
-// VALMORA LUXE — STOREFRONT ENGINE & 3D INTERACTIVE CONTROLLER
+// VALMORA — STOREFRONT ENGINE & 3D INTERACTIVE CONTROLLER
 // Real-time Telegram Dispatch | VIP Delivery Onboarding | 3D Perspective Cards
 // ==========================================================================
 
@@ -193,36 +193,31 @@ async function loadProducts() {
     `;
 
     let serverProds = [];
+    let serverAvailable = false;
     try {
-        const res = await fetch('/api/products');
+        const res = await fetch(window.valmoraApiUrl('/api/products'));
+        if (!res.ok) throw new Error(`Products API returned ${res.status}`);
         const data = await res.json();
-        if (data.success && data.products && data.products.length > 0) {
-            serverProds = data.products;
-        }
-    } catch (err) {}
+        if (!data.success || !Array.isArray(data.products)) throw new Error("Products API javobi noto'g'ri.");
+        serverAvailable = true;
+        serverProds = data.products;
+    } catch (err) {
+        console.error("VALMORA products API error:", err);
+    }
 
-    // Also get admin-added products from localStorage
-    let localProds = [];
-    try {
-        const rawLocal = localStorage.getItem('valmora_products_v3') || localStorage.getItem('valmora_products');
-        if (rawLocal) {
-            localProds = JSON.parse(rawLocal);
-        }
-    } catch (e) {}
-
-    if (serverProds.length > 0) {
-        // Merge without duplicates (local products prioritized for newest additions)
-        const combined = [...serverProds];
-        localProds.forEach(lp => {
-            if (!combined.some(sp => sp.id === lp.id)) {
-                combined.unshift(lp);
+    allProducts = serverAvailable ? serverProds : fallbackProducts();
+    if (serverAvailable) {
+        cart.forEach(item => {
+            const currentProduct = allProducts.find(product => product.id === item.id);
+            if (currentProduct) {
+                item.title = currentProduct.title;
+                item.price = Number(currentProduct.price);
+                item.image = currentProduct.image;
+                item.category = currentProduct.category_name || currentProduct.category;
             }
         });
-        allProducts = combined;
-    } else if (localProds.length > 0) {
-        allProducts = localProds;
-    } else {
-        allProducts = fallbackProducts();
+        localStorage.setItem('valmora_cart', JSON.stringify(cart));
+        updateCartUI();
     }
 
     filteredProducts = [...allProducts];
@@ -331,8 +326,11 @@ function renderProducts() {
         const isWishlisted = wishlist.includes(p.id);
         const originalPrice = p.original_price || (p.price * 1.3);
         const discountPct = Math.round(((originalPrice - p.price) / originalPrice) * 100);
-        const isLowStock = (p.stock || 10) <= 5;
-        const stockText = isLowStock ? `🔴 Faqat ${p.stock || 3} dona qoldi!` : `🟢 Omborda mavjud`;
+        const stockCount = Number(p.stock ?? 0);
+        const isLowStock = stockCount <= 5;
+        const stockText = stockCount <= 0 ? '🔴 Sotuvda yo‘q' : isLowStock
+            ? `🔴 Faqat ${stockCount} dona qoldi!`
+            : '🟢 Omborda mavjud';
 
         return `
             <div class="product-card-3d" data-id="${p.id}" id="prodCard-${p.id}">
@@ -390,10 +388,10 @@ function renderProducts() {
                     </div>
 
                     <div class="card-actions-grid">
-                        <button class="btn-order-instant" onclick="openInstantOrder('${p.id}')">
+                        <button class="btn-order-instant" onclick="openInstantOrder('${p.id}')" ${stockCount <= 0 ? 'disabled' : ''}>
                             <i class="fa-solid fa-bolt"></i> ${typeof getTranslation === 'function' ? getTranslation('btn_instant_order', '1 Bosishda Buyurtma') : '1 Bosishda Buyurtma'}
                         </button>
-                        <button class="btn-add-cart-icon" onclick="addToCart('${p.id}')" title="Savatchaga qo'shish">
+                        <button class="btn-add-cart-icon" onclick="addToCart('${p.id}')" title="Savatchaga qo'shish" ${stockCount <= 0 ? 'disabled' : ''}>
                             <i class="fa-solid fa-bag-shopping"></i>
                         </button>
                     </div>
@@ -525,6 +523,10 @@ function addToCart(productId, qty = 1) {
     if (!prod) return;
 
     const existing = cart.find(item => item.id === productId);
+    if (Number(prod.stock ?? 0) < (existing?.qty || 0) + qty) {
+        showStoreToast("Omborda so'ralgan miqdorda mahsulot qolmagan.", "error");
+        return;
+    }
     if (existing) {
         existing.qty += qty;
     } else {
@@ -599,6 +601,13 @@ function renderCartDrawerItems(totalPrice) {
 function changeCartItemQty(idx, change) {
     luxuryAudio.playClick();
     if (!cart[idx]) return;
+    if (change > 0) {
+        const product = allProducts.find(item => item.id === cart[idx].id);
+        if (!product || cart[idx].qty >= Number(product.stock ?? 0)) {
+            showStoreToast("Omborda boshqa mahsulot qolmagan.", "error");
+            return;
+        }
+    }
     cart[idx].qty += change;
     if (cart[idx].qty <= 0) {
         cart.splice(idx, 1);
@@ -713,6 +722,10 @@ function openInstantOrder(productId) {
     luxuryAudio.playClick();
     const prod = allProducts.find(p => p.id === productId);
     if (!prod) return;
+    if (Number(prod.stock ?? 0) < 1) {
+        showStoreToast("Bu mahsulot hozir sotuvda yo'q.", "error");
+        return;
+    }
 
     selectedProductForInstantOrder = prod;
     const modal = document.getElementById('checkoutModal');
@@ -863,11 +876,13 @@ async function handleCheckoutSubmit(e) {
     const payload = {
         customerName: name,
         customerPhone: phone,
-        customerEmail: `${name.toLowerCase().replace(/\s+/g, '')}@valmora.uz`,
+        customerEmail: "",
         shippingAddress: `${region}, ${address}${note ? ' (Izoh: ' + note + ')' : ''}`,
         items: orderItems,
         totalAmount: totalAmount,
-        paymentMethod: paymentMethod
+        paymentMethod: paymentMethod,
+        discountPercent: selectedProductForInstantOrder ? 0 : currentPromoDiscount,
+        promoCode: document.getElementById('cartPromoInput')?.value.trim().toUpperCase() || ""
     };
 
     const submitBtn = document.getElementById('btnSubmitOrder');
@@ -876,7 +891,7 @@ async function handleCheckoutSubmit(e) {
     submitBtn.disabled = true;
 
     try {
-        const response = await fetch('https://dropship-pro-gcqo.onrender.com/api/orders', {
+        const response = await fetch(window.valmoraApiUrl('/api/orders'), {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
@@ -884,7 +899,7 @@ async function handleCheckoutSubmit(e) {
 
         const result = await response.json();
 
-        if (result.success) {
+        if (response.ok && result.success) {
             // Clean cart if ordered from cart
             if (!selectedProductForInstantOrder) {
                 cart = [];
@@ -895,17 +910,14 @@ async function handleCheckoutSubmit(e) {
             closeModal('checkoutModal');
             luxuryAudio.playSuccess();
             triggerGoldConfetti();
+            payload.totalAmount = result.total_amount;
             showOrderSuccessReceipt(result.order_no, result.tracking_code, payload);
         } else {
             showStoreToast(result.error || "Buyurtmani qabul qilishda xatolik yuz berdi", "error");
         }
     } catch (err) {
-        // Fallback for offline mode
-        const offlineOrderNo = `VAL-${Date.now().toString().slice(-6)}`;
-        closeModal('checkoutModal');
-        luxuryAudio.playSuccess();
-        triggerGoldConfetti();
-        showOrderSuccessReceipt(offlineOrderNo, `VAL-TRK-${Date.now().toString().slice(-4)}`, payload);
+        console.error("VALMORA order API error:", err);
+        showStoreToast("Buyurtma saqlanmadi. Internet ulanishini tekshirib, qayta urinib ko'ring.", "error");
     } finally {
         submitBtn.innerHTML = originalBtnText;
         submitBtn.disabled = false;

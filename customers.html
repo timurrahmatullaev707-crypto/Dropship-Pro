@@ -63,25 +63,25 @@
                 <div class="stats">
                     <div class="stat-card">
                         <div class="stat-top"><span>Jami Mijozlar</span><div class="stat-icon"><i class="fa-solid fa-users"></i></div></div>
-                        <h2>1,840 ta</h2>
+                        <h2 id="customerCount">0 ta</h2>
                     </div>
                     <div class="stat-card">
                         <div class="stat-top"><span>Qayta Xarid</span><div class="stat-icon"><i class="fa-solid fa-rotate-right"></i></div></div>
-                        <h2>46.2%</h2>
+                        <h2 id="repeatCustomerRate">0%</h2>
                     </div>
                     <div class="stat-card">
                         <div class="stat-top"><span>O'rtacha Chek</span><div class="stat-icon"><i class="fa-solid fa-receipt"></i></div></div>
-                        <h2>820,000 so'm</h2>
+                        <h2 id="customerAverageOrder">0 so'm</h2>
                     </div>
                     <div class="stat-card">
                         <div class="stat-top"><span>Mamnuniyat</span><div class="stat-icon"><i class="fa-solid fa-star"></i></div></div>
-                        <h2>4.95 / 5.0</h2>
+                        <h2>—</h2>
                     </div>
                 </div>
 
                 <div class="panel orders-panel">
                     <div class="panel-header">
-                        <h3>Valmora VIP Mijozlari</h3>
+                        <h3>VALMORA mijozlari</h3>
                     </div>
                     <div class="table-wrapper">
                         <table>
@@ -95,31 +95,8 @@
                                     <th>STATUS</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr>
-                                    <td><div class="customer"><div class="customer-avatar">F</div><span>Farrux Zokirov</span></div></td>
-                                    <td>+998 90 821 34 56</td>
-                                    <td>Toshkent</td>
-                                    <td>6 ta</td>
-                                    <td><strong>4,840,000 so'm</strong></td>
-                                    <td><span class="status-badge completed">Valmora VIP</span></td>
-                                </tr>
-                                <tr>
-                                    <td><div class="customer"><div class="customer-avatar">M</div><span>Madina Karimova</span></div></td>
-                                    <td>+998 93 412 88 90</td>
-                                    <td>Samarqand</td>
-                                    <td>4 ta</td>
-                                    <td><strong>3,250,000 so'm</strong></td>
-                                    <td><span class="status-badge completed">Doimiy</span></td>
-                                </tr>
-                                <tr>
-                                    <td><div class="customer"><div class="customer-avatar">J</div><span>Jasur Bekmirzayev</span></div></td>
-                                    <td>+998 99 777 12 34</td>
-                                    <td>Buxoro</td>
-                                    <td>3 ta</td>
-                                    <td><strong>2,180,000 so'm</strong></td>
-                                    <td><span class="status-badge shipping">Faol</span></td>
-                                </tr>
+                            <tbody id="customersTableBody">
+                                <tr><td colspan="6" style="text-align:center;padding:24px;">Ma'lumot yuklanmoqda...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -128,6 +105,51 @@
         </main>
     </div>
     <script src="translations.js"></script>
+    <script src="api-config.js"></script>
     <script src="script.js"></script>
+    <script>
+        function escapeCustomerText(value) {
+            return String(value ?? "").replace(/[&<>"']/g, character => ({
+                "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+            })[character]);
+        }
+
+        document.addEventListener("DOMContentLoaded", async () => {
+            const tbody = document.getElementById("customersTableBody");
+            try {
+                const [customersResponse, overviewResponse] = await Promise.all([
+                    valmoraApi.request("/api/customers"),
+                    valmoraApi.request("/api/overview")
+                ]);
+                const customersResult = await customersResponse.json();
+                const overviewResult = await overviewResponse.json();
+                if (!customersResponse.ok || !customersResult.success) {
+                    throw new Error(customersResult.error || "Mijozlar ro'yxatini yuklab bo'lmadi.");
+                }
+                if (!overviewResponse.ok || !overviewResult.success) {
+                    throw new Error(overviewResult.error || "Statistikani yuklab bo'lmadi.");
+                }
+                const customers = customersResult.customers || [];
+                document.getElementById("customerCount").textContent = `${customers.length} ta`;
+                document.getElementById("repeatCustomerRate").textContent = customers.length
+                    ? `${Math.round(customers.filter(customer => customer.orders_count > 1).length / customers.length * 100)}%`
+                    : "0%";
+                document.getElementById("customerAverageOrder").textContent =
+                    `${formatSum(overviewResult.metrics.average_order_value || 0)}`;
+                tbody.innerHTML = customers.length ? customers.map(customer => `
+                    <tr>
+                        <td><div class="customer"><div class="customer-avatar">${escapeCustomerText((customer.name || "M")[0])}</div><span>${escapeCustomerText(customer.name)}</span></div></td>
+                        <td>${escapeCustomerText(customer.phone)}</td>
+                        <td>${escapeCustomerText(customer.city)}</td>
+                        <td>${Number(customer.orders_count) || 0} ta</td>
+                        <td><strong>${formatSum(customer.total_spent || 0)}</strong></td>
+                        <td><span class="status-badge completed">${escapeCustomerText(customer.tier)}</span></td>
+                    </tr>
+                `).join("") : '<tr><td colspan="6" style="text-align:center;padding:24px;">Hozircha mijozlar yo‘q.</td></tr>';
+            } catch (error) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:#ff6b6b;">${escapeCustomerText(error.message)}</td></tr>`;
+            }
+        });
+    </script>
 </body>
 </html>

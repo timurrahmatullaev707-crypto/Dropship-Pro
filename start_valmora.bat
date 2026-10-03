@@ -1,8 +1,8 @@
 @echo off
-title VALMORA LUXE - Enterprise Commerce & Telegram Engine
+title VALMORA - Commerce & Telegram
 color 06
 echo =========================================================================
-echo    VALMORA LUXE - ENTERPRISE COMMERCE OPERATING SYSTEM
+echo    VALMORA - COMMERCE
 echo =========================================================================
 echo    Mijozlar Do'koni (Storefront): http://localhost:8080
 echo    Boshqaruv Markazi (Admin):    http://localhost:8080/admin.html

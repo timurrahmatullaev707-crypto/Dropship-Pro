@@ -15,7 +15,7 @@ const DEFAULT_PRODUCTS = [
         original_price: 1250000,
         originalPrice: 1250000,
         cost: 420000,
-        sales: 184,
+        sales: 0,
         stock: 6,
         rating: 4.9,
         badge: "LUXURY",
@@ -33,7 +33,7 @@ const DEFAULT_PRODUCTS = [
         original_price: 1600000,
         originalPrice: 1600000,
         cost: 530000,
-        sales: 96,
+        sales: 0,
         stock: 4,
         rating: 5.0,
         badge: "EKSKLYUZIV",
@@ -51,7 +51,7 @@ const DEFAULT_PRODUCTS = [
         original_price: 520000,
         originalPrice: 520000,
         cost: 165000,
-        sales: 245,
+        sales: 0,
         stock: 12,
         rating: 4.8,
         badge: "TOP",
@@ -69,7 +69,7 @@ const DEFAULT_PRODUCTS = [
         original_price: 990000,
         originalPrice: 990000,
         cost: 290000,
-        sales: 142,
+        sales: 0,
         stock: 8,
         rating: 4.9,
         badge: "LUXURY",
@@ -87,7 +87,7 @@ const DEFAULT_PRODUCTS = [
         original_price: 750000,
         originalPrice: 750000,
         cost: 210000,
-        sales: 112,
+        sales: 0,
         stock: 9,
         rating: 4.9,
         badge: "YANGI",
@@ -105,7 +105,7 @@ const DEFAULT_PRODUCTS = [
         original_price: 1950000,
         originalPrice: 1950000,
         cost: 650000,
-        sales: 78,
+        sales: 0,
         stock: 5,
         rating: 5.0,
         badge: "EKSKLYUZIV",
@@ -116,13 +116,7 @@ const DEFAULT_PRODUCTS = [
 ];
 
 // Initial Orders for Valmora
-const DEFAULT_ORDERS = [
-    { id: "#VM-8041", customer: "Farrux Zokirov", city: "Toshkent", product: "Valmora Chronograph Watch", price: 890000, date: "Bugun, 21:15", status: "completed" },
-    { id: "#VM-8040", customer: "Madina Karimova", city: "Samarqand", product: "Nappa Leather Travel Duffle", price: 1150000, date: "Bugun, 20:42", status: "completed" },
-    { id: "#VM-8039", customer: "Jasur Bekmirzayev", city: "Buxoro", product: "Damascus Steel Artisanal Knife", price: 680000, date: "Bugun, 19:30", status: "pending" },
-    { id: "#VM-8038", customer: "Shahzoda Aliyeva", city: "Andijon", product: "Ceramic Acoustic Diffuser", price: 380000, date: "Kecha, 22:10", status: "completed" },
-    { id: "#VM-8037", customer: "Akmal Saidov", city: "Namangan", product: "Wireless Ceramic Charging Tray", price: 420000, date: "Kecha, 18:05", status: "shipping" }
-];
+const DEFAULT_ORDERS = [];
 
 // LocalStorage Keys
 const STORAGE_KEYS = {
@@ -133,29 +127,49 @@ const STORAGE_KEYS = {
 };
 
 // ==========================================================================
-// VALMORA ENTERPRISE COMMERCE API CLIENT ($1,000+ FLAGSHIP ARCHITECTURE)
+// VALMORA COMMERCE API CLIENT
 // ==========================================================================
 const valmoraApi = {
-    baseUrl: (window.location.protocol === "http:" || window.location.protocol === "https:") 
-        ? (window.location.port === "8080" ? "" : "http://localhost:8080")
-        : "http://localhost:8080",
+    baseUrl: window.VALMORA_API_BASE_URL || "",
     isOnline: false,
 
+    async request(path, options = {}) {
+        const headers = new Headers(options.headers || {});
+        let token = sessionStorage.getItem("valmora_admin_token");
+        if (token) headers.set("Authorization", `Bearer ${token}`);
+
+        const send = () => fetch(`${this.baseUrl}${path}`, { ...options, headers });
+        let response = await send();
+        if (response.status === 401) {
+            token = window.prompt("Admin API kalitini kiriting:");
+            if (!token) throw new Error("Admin API kaliti kiritilmadi.");
+            sessionStorage.setItem("valmora_admin_token", token.trim());
+            headers.set("Authorization", `Bearer ${token.trim()}`);
+            response = await send();
+            if (response.status === 401) {
+                sessionStorage.removeItem("valmora_admin_token");
+                throw new Error("Admin API kaliti noto'g'ri.");
+            }
+        }
+        return response;
+    },
+
     async checkHealth() {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 15000);
         try {
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 2000);
             const res = await fetch(`${this.baseUrl}/api/health`, { signal: controller.signal });
-            clearTimeout(timeoutId);
             if (res.ok) {
                 const data = await res.json();
-                this.isOnline = true;
-                this.updateStatusBadge(true, data);
+                this.isOnline = data.status === "healthy" && data.database === "connected";
+                this.updateStatusBadge(this.isOnline, data);
                 return data;
             }
         } catch (e) {
             this.isOnline = false;
             this.updateStatusBadge(false);
+        } finally {
+            clearTimeout(timeoutId);
         }
         return null;
     },
@@ -167,77 +181,56 @@ const valmoraApi = {
             const text = pill.querySelector(".valmora-cloud-text");
             if (online) {
                 if (dot) dot.classList.remove("offline");
-                if (text) text.textContent = "VALMORA CLOUD v3.5";
-                pill.title = "Valmora Python & SQLite Server Ishchi Holatda (99.98% Uptime)";
+                if (text) text.textContent = "VALMORA API";
+                pill.title = "VALMORA backend ishlayapti.";
             } else {
                 if (dot) dot.classList.add("offline");
-                if (text) text.textContent = "VALMORA LOCAL";
-                pill.title = "Local Rejimda Ishlamoqda. Backendni yoqish: start_valmora.bat";
+                if (text) text.textContent = "API ULANMAGAN";
+                pill.title = "Backendga ulanib bo'lmadi.";
             }
         });
     },
 
     async fetchProducts() {
-        if (!this.isOnline) return getStoredProducts();
-        try {
-            const res = await fetch(`${this.baseUrl}/api/products`);
-            if (res.ok) {
-                const data = await res.json();
-                if (data.products && data.products.length > 0) {
-                    saveStoredProducts(data.products);
-                    return data.products;
-                }
-            }
-        } catch (e) {
-            console.warn("Valmora API fallback to local storage:", e);
-        }
-        return getStoredProducts();
+        const res = await this.request("/api/products?scope=admin");
+        const data = await res.json();
+        if (!res.ok || !data.success) throw new Error(data.error || "Mahsulotlarni yuklab bo'lmadi.");
+        saveStoredProducts(data.products || []);
+        return data.products || [];
     },
 
     async createProduct(productData) {
-        if (this.isOnline) {
-            try {
-                await fetch(`${this.baseUrl}/api/products`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(productData)
-                });
-            } catch (e) {
-                console.warn("Could not save to backend DB, kept in local storage");
-            }
-        }
+        const response = await this.request("/api/products", {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(productData)
+        });
+        const result = await response.json();
+        if (!response.ok || !result.success) throw new Error(result.error || "Mahsulotni saqlab bo'lmadi.");
+        return result.product;
     },
 
     async deleteProduct(productId) {
-        if (this.isOnline) {
-            try {
-                await fetch(`${this.baseUrl}/api/products/${productId}`, { method: 'DELETE' });
-            } catch (e) {}
-        }
+        const response = await this.request(`/api/products/${encodeURIComponent(productId)}`, { method: 'DELETE' });
+        const result = await response.json();
+        if (!response.ok || !result.success) throw new Error(result.error || "Mahsulotni o'chirib bo'lmadi.");
     },
 
     async createOrder(orderPayload) {
-        if (this.isOnline) {
-            try {
-                const res = await fetch(`${this.baseUrl}/api/orders`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(orderPayload)
-                });
-                if (res.ok) return await res.json();
-            } catch (e) {}
-        }
-        return {
-            success: true,
-            order_no: `VAL-${Math.floor(1000 + Math.random() * 9000)}`,
-            tracking_code: `VAL-UZ-TRK-${Math.floor(1000 + Math.random() * 9000)}`
-        };
+        const response = await this.request("/api/orders", {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(orderPayload)
+        });
+        const result = await response.json();
+        if (!response.ok || !result.success) throw new Error(result.error || "Buyurtmani saqlab bo'lmadi.");
+        return result;
     },
 
     async runAiOptimizer(cost, category = "accessories") {
         if (this.isOnline) {
             try {
-                const res = await fetch(`${this.baseUrl}/api/ai/pricing-optimizer`, {
+                const res = await this.request("/api/ai/pricing-optimizer", {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ cost, category, luxury_factor: 2.15 })
@@ -271,8 +264,8 @@ const valmoraApi = {
             <div class="modal" style="max-width: 580px;">
                 <div class="modal-header">
                     <div>
-                        <span class="badge" style="background: rgba(212,175,55,0.15); color: var(--gold); border: 1px solid var(--gold);">VALMORA ENTERPRISE</span>
-                        <h3 style="margin-top: 6px;">Valmora OS v3.5 Tizim Holati</h3>
+                        <span class="badge" style="background: rgba(212,175,55,0.15); color: var(--gold); border: 1px solid var(--gold);">VALMORA</span>
+                        <h3 style="margin-top: 6px;">Tizim holati</h3>
                     </div>
                     <button class="modal-close-btn" onclick="document.getElementById('valmoraStatusModal').remove()"><i class="fa-solid fa-xmark"></i></button>
                 </div>
@@ -284,19 +277,15 @@ const valmoraApi = {
                         </div>
                         <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
                             <span style="color: var(--text-muted);">Ma'lumotlar Bazasi:</span>
-                            <strong>SQLite3 (valmora.db)</strong>
+                            <strong>${this.isOnline ? 'Ulangan' : 'Ulanmagan'}</strong>
                         </div>
                         <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
                             <span style="color: var(--text-muted);">API Shlyuzi:</span>
-                            <code>http://localhost:8080/api</code>
-                        </div>
-                        <div style="display: flex; justify-content: space-between;">
-                            <span style="color: var(--text-muted);">Bozor Qiymati:</span>
-                            <strong style="color: var(--gold); font-family: var(--font-serif);">$1,250 USD Turnkey Enterprise</strong>
+                            <code>${this.baseUrl || window.location.origin}/api</code>
                         </div>
                     </div>
                     <div style="display: flex; gap: 10px;">
-                        <button class="btn-gradient" style="flex: 1;" onclick="window.open('http://localhost:8080/api/docs', '_blank')">
+                        <button class="btn-gradient" style="flex: 1;" onclick="window.open(valmoraApi.baseUrl + '/api/docs', '_blank')">
                             <i class="fa-solid fa-code"></i> API Explorer & Docs
                         </button>
                         <button class="btn-glass" onclick="document.getElementById('valmoraStatusModal').remove()">Yopish</button>
@@ -330,7 +319,7 @@ const valmoraApi = {
                         
                         <div class="valmora-cert-header">
                             <div style="font-size: 24px; color: #d4af37;"><i class="fa-solid fa-gem"></i></div>
-                            <div class="valmora-cert-title">VALMORA LUXE</div>
+                            <div class="valmora-cert-title">VALMORA</div>
                             <div class="valmora-cert-subtitle">Certificate of Authenticity & Official Invoice</div>
                         </div>
 
@@ -386,6 +375,8 @@ const valmoraApi = {
         document.body.appendChild(modal);
     }
 };
+
+window.valmoraApi = valmoraApi;
 
 // Data Helpers
 function getStoredProducts() {
@@ -870,9 +861,8 @@ function initAddProductModal() {
     if (costInput) costInput.addEventListener("input", calculateProfit);
 
     if (form) {
-        form.addEventListener("submit", (e) => {
+        form.addEventListener("submit", async (e) => {
             e.preventDefault();
-            sound.playSuccess();
 
             const name = document.getElementById("productName").value.trim();
             const price = Number(document.getElementById("productPrice").value);
@@ -912,33 +902,36 @@ function initAddProductModal() {
                 status: "active"
             };
 
-            const products = getStoredProducts();
-            products.unshift(newProduct);
-            saveStoredProducts(products);
-
-            // Sync with Valmora Python SQLite Backend
-            if (window.valmoraApi && typeof window.valmoraApi.createProduct === 'function') {
-                valmoraApi.createProduct(newProduct);
+            try {
+                const savedProduct = await valmoraApi.createProduct(newProduct);
+                const products = getStoredProducts().filter(product => product.id !== savedProduct.id);
+                products.unshift(savedProduct);
+                saveStoredProducts(products);
+                closeModal();
+                form.reset();
+                renderProductsGrid();
+                sound.playSuccess();
+                launchConfetti();
+                showToast(`"${name}" VALMORA katalogiga saqlandi.`, "success");
+            } catch (error) {
+                showToast(error.message || "Mahsulotni saqlashda xatolik.", "error");
             }
-
-            closeModal();
-            form.reset();
-            renderProductsGrid();
-            launchConfetti();
-            showToast(`"${name}" Valmora katalogiga muvaffaqiyatli qo'shildi!`, "success");
         });
     }
 }
 
-function deleteProduct(productId) {
+async function deleteProduct(productId) {
     sound.playClick();
     if (confirm("Mahsulotni o'chirishni tasdiqlaysizmi?")) {
-        let products = getStoredProducts();
-        products = products.filter(p => p.id !== productId);
-        saveStoredProducts(products);
-        valmoraApi.deleteProduct(productId);
-        renderProductsGrid();
-        showToast("Mahsulot o'chirildi", "success");
+        try {
+            await valmoraApi.deleteProduct(productId);
+            const products = getStoredProducts().filter(product => product.id !== productId);
+            saveStoredProducts(products);
+            renderProductsGrid();
+            showToast("Mahsulot o'chirildi.", "success");
+        } catch (error) {
+            showToast(error.message || "Mahsulotni o'chirishda xatolik.", "error");
+        }
     }
 }
 
@@ -1209,42 +1202,47 @@ function triggerLiveSalesPopup() {
 // ==========================================================================
 // DASHBOARD LOGIC (index.html)
 // ==========================================================================
-function initDashboardPage() {
-    const orders = getStoredOrders();
-
-    const totalSales = orders.reduce((acc, o) => acc + (o.price || 0), 0);
-    const totalOrdersCount = orders.length + 420;
-    const totalProfit = Math.round(totalSales * 0.52);
-
+async function initDashboardPage() {
     const revenueEl = document.getElementById("dashTotalRevenue");
     const ordersEl = document.getElementById("dashTotalOrders");
     const profitEl = document.getElementById("dashTotalProfit");
-
-    if (revenueEl) revenueEl.textContent = formatSum(totalSales + 52400000);
-    if (ordersEl) ordersEl.textContent = totalOrdersCount;
-    if (profitEl) profitEl.textContent = formatSum(totalProfit + 27200000);
-
     const tbody = document.getElementById("recentOrdersTbody");
-    if (tbody) {
-        tbody.innerHTML = orders.slice(0, 5).map(o => `
+    if (!tbody) return;
+
+    try {
+        const response = await valmoraApi.request("/api/overview");
+        const result = await response.json();
+        if (!response.ok || !result.success) {
+            throw new Error(result.error || "Dashboard ma'lumotlarini yuklab bo'lmadi.");
+        }
+
+        const metrics = result.metrics;
+        if (revenueEl) revenueEl.textContent = formatSum(metrics.total_revenue);
+        if (ordersEl) ordersEl.textContent = metrics.total_orders;
+        if (profitEl) profitEl.textContent = formatSum(metrics.net_profit);
+        const orders = result.recent_orders || [];
+        tbody.innerHTML = orders.length ? orders.map(o => `
             <tr>
-                <td class="order-id">${o.id}</td>
+                <td class="order-id">${o.order_no}</td>
                 <td>
                     <div class="customer">
-                        <div class="customer-avatar">${o.customer ? o.customer[0].toUpperCase() : 'M'}</div>
-                        <span>${o.customer}</span>
+                        <div class="customer-avatar">${o.customer_name ? o.customer_name[0].toUpperCase() : 'M'}</div>
+                        <span>${o.customer_name || "Mijoz"}</span>
                     </div>
                 </td>
-                <td>${o.product}</td>
-                <td>${o.date}</td>
-                <td><strong>${formatSum(o.price)}</strong></td>
+                <td>${(o.items || []).map(item => `${item.title} (x${item.qty})`).join(", ")}</td>
+                <td>${o.created_at || ""}</td>
+                <td><strong>${formatSum(o.total_amount)}</strong></td>
                 <td>
                     <span class="status-badge ${o.status}">
                         ${o.status === 'completed' ? 'Yakunlangan' : o.status === 'shipping' ? 'Yetkazilmoqda' : 'Kutilmoqda'}
                     </span>
                 </td>
             </tr>
-        `).join("");
+        `).join("") : '<tr><td colspan="6" style="text-align:center;padding:24px;">Hozircha buyurtmalar yo‘q.</td></tr>';
+    } catch (error) {
+        console.error("Dashboard API error:", error);
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:24px;color:#ff6b6b;">${error.message}</td></tr>`;
     }
 }
 
@@ -1315,11 +1313,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     updateCartUI();
     injectCloudPill();
 
-    // Check backend connection
-    await valmoraApi.checkHealth();
+    valmoraApi.checkHealth();
 
     if (document.getElementById("productsGrid")) {
-        renderProductsGrid();
+        valmoraApi.fetchProducts().then(products => {
+            saveStoredProducts(products);
+            renderProductsGrid();
+        }).catch(error => showToast(error.message || "Mahsulotlarni yuklab bo'lmadi.", "error"));
     }
 
     if (document.getElementById("recentOrdersTbody")) {

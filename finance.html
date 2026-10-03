@@ -63,26 +63,26 @@
                 <div class="stats">
                     <div class="stat-card">
                         <div class="stat-top"><span>Umumiy Tushum</span><div class="stat-icon"><i class="fa-solid fa-wallet"></i></div></div>
-                        <h2>98,400,000 so'm</h2>
+                        <h2 id="financeRevenue">0 so'm</h2>
                     </div>
                     <div class="stat-card">
                         <div class="stat-top"><span>Yetkazib Beruvchi Tannarxi</span><div class="stat-icon"><i class="fa-solid fa-receipt"></i></div></div>
-                        <h2>44,200,000 so'm</h2>
+                        <h2 id="financeCosts">0 so'm</h2>
                     </div>
                     <div class="stat-card">
                         <div class="stat-top"><span>Sof Foyda</span><div class="stat-icon"><i class="fa-solid fa-gem"></i></div></div>
-                        <h2 style="color: var(--gold);">54,200,000 so'm</h2>
+                        <h2 id="financeProfit" style="color: var(--gold);">0 so'm</h2>
                     </div>
                     <div class="stat-card">
                         <div class="stat-top"><span>Sof Marja</span><div class="stat-icon"><i class="fa-solid fa-percent"></i></div></div>
-                        <h2>55.1%</h2>
+                        <h2 id="financeMargin">0%</h2>
                     </div>
                 </div>
 
                 <div class="panel">
                     <div class="panel-header">
                         <h3>Moliya Tranzaksiyalari Tarixi</h3>
-                        <button class="btn-glass" onclick="showToast('Excel hisoboti shakllantirildi', 'success')">
+                        <button class="btn-glass" onclick="downloadFinanceReport()">
                             <i class="fa-solid fa-download"></i> Hisobotni Yuklash
                         </button>
                     </div>
@@ -98,31 +98,8 @@
                                     <th>HOLATI</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr>
-                                    <td>#TRX-810</td>
-                                    <td><span class="status-badge completed">Tushum</span></td>
-                                    <td>Valmora Chronograph Watch sotuvi</td>
-                                    <td>Bugun, 18:30</td>
-                                    <td><strong style="color: var(--gold);">+890,000 so'm</strong></td>
-                                    <td>Tasdiqlangan</td>
-                                </tr>
-                                <tr>
-                                    <td>#TRX-809</td>
-                                    <td><span class="status-badge completed">Tushum</span></td>
-                                    <td>Nappa Leather Travel Duffle sotuvi</td>
-                                    <td>Kecha, 21:00</td>
-                                    <td><strong style="color: var(--gold);">+1,150,000 so'm</strong></td>
-                                    <td>Tasdiqlangan</td>
-                                </tr>
-                                <tr>
-                                    <td>#TRX-808</td>
-                                    <td><span class="status-badge pending">Chiqim</span></td>
-                                    <td>Ta'minotchi xarajat to'lovi</td>
-                                    <td>Kecha, 15:45</td>
-                                    <td><strong style="color: var(--terracotta);">-490,000 so'm</strong></td>
-                                    <td>To'langan</td>
-                                </tr>
+                            <tbody id="financeTransactions">
+                                <tr><td colspan="6" style="text-align:center;padding:24px;">Ma'lumot yuklanmoqda...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -131,6 +108,56 @@
         </main>
     </div>
     <script src="translations.js"></script>
+    <script src="api-config.js"></script>
     <script src="script.js"></script>
+    <script>
+        let financeTransactions = [];
+
+        function escapeFinanceText(value) {
+            return String(value ?? "").replace(/[&<>"']/g, character => ({
+                "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+            })[character]);
+        }
+
+        function downloadFinanceReport() {
+            const rows = [["ID", "Tur", "Tavsif", "Sana", "Summa", "Holati"]];
+            financeTransactions.forEach(item => rows.push([
+                item.trx_code, item.type, item.description, item.created_at, item.amount, item.status
+            ]));
+            const csv = rows.map(row => row.map(value => `"${String(value ?? "").replace(/"/g, '""')}"`).join(",")).join("\r\n");
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8" }));
+            link.download = "valmora-finance.csv";
+            link.click();
+            URL.revokeObjectURL(link.href);
+        }
+
+        document.addEventListener("DOMContentLoaded", async () => {
+            const tbody = document.getElementById("financeTransactions");
+            try {
+                const response = await valmoraApi.request("/api/finances");
+                const result = await response.json();
+                if (!response.ok || !result.success) throw new Error(result.error || "Moliya ma'lumotlarini yuklab bo'lmadi.");
+                financeTransactions = result.transactions || [];
+                document.getElementById("financeRevenue").textContent = formatSum(result.total_revenue);
+                document.getElementById("financeCosts").textContent = formatSum(result.cogs_paid);
+                document.getElementById("financeProfit").textContent = formatSum(result.net_profit);
+                document.getElementById("financeMargin").textContent = `${result.profit_margin_pct}%`;
+                tbody.innerHTML = financeTransactions.length ? financeTransactions.map(item => {
+                    const outgoing = item.type === "Chiqim";
+                    return `<tr>
+                        <td>${escapeFinanceText(item.trx_code)}</td>
+                        <td><span class="status-badge ${outgoing ? "pending" : "completed"}">${escapeFinanceText(item.type)}</span></td>
+                        <td>${escapeFinanceText(item.description)}</td>
+                        <td>${escapeFinanceText(item.created_at)}</td>
+                        <td><strong style="color:var(${outgoing ? "--terracotta" : "--gold"});">${outgoing ? "-" : "+"}${formatSum(item.amount)}</strong></td>
+                        <td>${escapeFinanceText(item.status)}</td>
+                    </tr>`;
+                }).join("") : '<tr><td colspan="6" style="text-align:center;padding:24px;">Hozircha tranzaksiyalar yo‘q.</td></tr>';
+            } catch (error) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:#ff6b6b;">${escapeFinanceText(error.message)}</td></tr>`;
+            }
+        });
+    </script>
 </body>
 </html>

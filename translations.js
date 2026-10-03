@@ -1,5 +1,5 @@
 // ==========================================================================
-// VALMORA LUXE — MULTI-LANGUAGE TRANSLATION ENGINE (UZ / RU / EN)
+// VALMORA — MULTI-LANGUAGE TRANSLATION ENGINE (UZ / RU / EN)
 // Instant Reactive Switching | LocalStorage Persistence
 // ==========================================================================
 
@@ -71,7 +71,7 @@ const VALMORA_I18N = {
         promo_apply: "Qo'llash",
         
         // Onboarding
-        onboard_title: "VALMORA PRIVÉ",
+        onboard_title: "VALMORA",
         onboard_desc: "Eksklyuziv to'plamni tomosha qilish va buyurtmani to'g'ri eshigingizgacha yetkazib berish (dastavka) uchun ma'lumotlaringizni kiriting.",
         ob_name_label: "Ism va familiyangiz *",
         ob_phone_label: "Telefon raqamingiz *",
@@ -92,7 +92,7 @@ const VALMORA_I18N = {
         
         // Success Receipt
         success_title: "Buyurtmangiz Qabul Qilindi!",
-        success_desc: "Tafsilotlar do'kon boshqaruviga va Telegram xabarnomasi orqali ma'muriyatga yuborildi.",
+        success_desc: "Buyurtmangiz saqlandi. Buyurtmani tasdiqlash uchun siz bilan telefon orqali bog'lanamiz.",
         step_received: "Qabul qilindi",
         step_qc: "Tekshirilmoqda",
         step_courier: "Kuryerda",
@@ -191,7 +191,7 @@ const VALMORA_I18N = {
         promo_apply: "Применить",
         
         // Onboarding
-        onboard_title: "VALMORA PRIVÉ",
+        onboard_title: "VALMORA",
         onboard_desc: "Введите ваши данные для доступа к эксклюзивной коллекции и быстрой доставки заказа прямо к вашей двери.",
         ob_name_label: "Имя и фамилия *",
         ob_phone_label: "Номер телефона *",
@@ -212,7 +212,7 @@ const VALMORA_I18N = {
         
         // Success Receipt
         success_title: "Ваш заказ успешно принят!",
-        success_desc: "Информация направлена в отдел комплектации и отправлена администратору в Telegram.",
+        success_desc: "Ваш заказ сохранён. Мы свяжемся с вами по телефону для подтверждения заказа.",
         step_received: "Принят",
         step_qc: "Проверка качества",
         step_courier: "У курьера",
@@ -311,7 +311,7 @@ const VALMORA_I18N = {
         promo_apply: "Apply",
         
         // Onboarding
-        onboard_title: "VALMORA PRIVÉ",
+        onboard_title: "VALMORA",
         onboard_desc: "Please provide your delivery details to unlock the exclusive collection and enable seamless direct-to-door courier delivery.",
         ob_name_label: "Full Name *",
         ob_phone_label: "Phone Number *",
@@ -332,7 +332,7 @@ const VALMORA_I18N = {
         
         // Success Receipt
         success_title: "Order Placed Successfully!",
-        success_desc: "Order has been registered in the ERP database and dispatched to the administrator via Telegram.",
+        success_desc: "Your order has been saved. We'll contact you by phone to confirm it.",
         step_received: "Received",
         step_qc: "Quality Check",
         step_courier: "In Transit",
