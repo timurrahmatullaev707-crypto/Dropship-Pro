@@ -433,3 +433,25 @@
                 tracking_code: order.tracking_code
             });
         }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            document.querySelectorAll("[data-order-status]").forEach(button => {
+                button.addEventListener("click", () => {
+                    currentOrderStatus = button.dataset.orderStatus;
+                    document.querySelectorAll("[data-order-status]").forEach(filter => {
+                        filter.classList.toggle("active", filter === button);
+                    });
+                    renderOrdersPage();
+                });
+            });
+
+            document.getElementById("orderSearchInput").addEventListener("input", event => {
+                currentOrderQuery = event.target.value;
+                renderOrdersPage();
+            });
+
+            renderOrdersPage();
+        });
+    </script>
+</body>
+</html>
