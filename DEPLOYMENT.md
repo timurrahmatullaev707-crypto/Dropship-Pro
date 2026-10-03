@@ -8,7 +8,7 @@ Netlify repodagi `netlify.toml` sozlamasidan foydalanadi. Build jarayoni faqat H
 
 - Repository: shu loyiha.
 - Start command: `python valmora_server.py`
-- `VALMORA_ADMIN_TOKEN`: uzun, tasodifiy sirli kalit. Uni Render Environment bo'limida saqlang; repoga yoki chatga yozmang. Admin API birinchi kirishda shu kalitni so'raydi.
+- `VALMORA_ADMIN_TOKEN`: uzun, tasodifiy sirli kalit. Uni Render Environment bo'limida saqlang; repoga yoki chatga yozmang. Timur `/admin.html` sahifasini ochib shu kalit bilan kiradi; API kalitni tasdiqlagandan keyingina o'sha brauzer sessiyasida do'kon sahifasida admin tugmasi ko'rinadi. Mijozlarda admin kaliti bo'lmagani uchun tugma ko'rinmaydi.
 - Doimiy disk ulang va mount yo'lini, masalan `/var/data`, belgilang.
 - `VALMORA_DB_PATH=/var/data/valmora.db` environment qiymatini qo'shing. Doimiy disksiz buyurtmalar va sozlamalar deploy/restartdan keyin yo'qolishi mumkin.
 

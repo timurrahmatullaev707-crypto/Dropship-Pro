@@ -1081,6 +1081,34 @@ function populateRegions() {
     if (coSelect) coSelect.innerHTML = options;
 }
 
+async function showOwnerAdminLink() {
+    const adminLink = document.getElementById('ownerAdminLink');
+    const token = sessionStorage.getItem('valmora_admin_token');
+    if (!adminLink || !token) return;
+
+    try {
+        const response = await fetch(window.valmoraApiUrl('/api/products?scope=admin'), {
+            headers: { Authorization: `Bearer ${token}` },
+            cache: 'no-store'
+        });
+        if (response.status === 401) {
+            sessionStorage.removeItem('valmora_admin_token');
+            return;
+        }
+        if (!response.ok) {
+            throw new Error(`Admin access check returned ${response.status}`);
+        }
+
+        const result = await response.json();
+        if (!result.success || !Array.isArray(result.products)) {
+            throw new Error('Admin access check returned an invalid response.');
+        }
+        adminLink.hidden = false;
+    } catch (error) {
+        console.error('VALMORA admin access check failed:', error);
+    }
+}
+
 // Initialize on DOM Ready
 document.addEventListener('DOMContentLoaded', () => {
     // Theme restore
@@ -1090,6 +1118,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     populateRegions();
+    showOwnerAdminLink();
     checkOnboarding();
     loadProducts();
     updateCartUI();
